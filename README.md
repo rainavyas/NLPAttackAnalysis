@@ -2,6 +2,6 @@
 
 Analyze impact of NLP adversarial attacks.
 
-## Attention Disribution
+## Attention Distribution
 
 Explore how attention distribution over sentences changes before and after adversarial attacks.
