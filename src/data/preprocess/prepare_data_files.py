@@ -1,7 +1,7 @@
 import sys
 import os
 import argparse
-from .data_utils import load_data
+from data_utils import load_data
 
 def split_dict_and_save(dict_object_lst, data_dir_path, part='test'):
     sentences = [d['text']+'\n' for d in dict_object_lst]
