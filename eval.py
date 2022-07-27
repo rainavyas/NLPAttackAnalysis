@@ -16,6 +16,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--model_name', type=str, required=True, help='e.g. bert-base-uncased')
     commandLineParser.add_argument('--data_dir_path', type=str, required=True, help='path to data directory')
     commandLineParser.add_argument('--bs', type=int, default=8, help="Specify batch size")
+    commandLineParser.add_argument('--force_cpu', type=str, choices=['yes', 'no'], default='no', help='force cpu use')
     args = commandLineParser.parse_args()
 
     # Save the command run
