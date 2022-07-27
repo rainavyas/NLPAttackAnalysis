@@ -43,5 +43,5 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss().to(device)
 
     # Evaluate
-    acc = Trainer.eval(dl, criterion, device)
+    acc = Trainer.eval(dl, model, criterion, device)
     print('Accuracy', acc)
