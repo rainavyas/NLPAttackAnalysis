@@ -3,6 +3,7 @@ import torch.nn as nn
 
 class SequenceClassifier(nn.Module):
     def __init__(self, model_name='bert-base-cased', num_labels=2):
+        super().__init__()
         self.model_name = model_name
         self.model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=num_labels)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
