@@ -13,7 +13,7 @@ if __name__ == "__main__":
     # Get command line arguments
     commandLineParser = argparse.ArgumentParser()
     commandLineParser.add_argument('--model_path', type=str, required=True, help='Specify path to saved model')
-    commandLineParser.add_argument('--model_name', type=str, required=True, help='e.g. bert-base-cased')
+    commandLineParser.add_argument('--model_name', type=str, required=True, help='e.g. bert-base-uncased')
     commandLineParser.add_argument('--data_dir_path', type=str, required=True, help='path to data directory')
     commandLineParser.add_argument('--bs', type=int, default=8, help="Specify batch size")
     args = commandLineParser.parse_args()
