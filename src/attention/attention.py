@@ -4,7 +4,7 @@ class AttentionAnalyzer():
         self.model = model
     
     @staticmethod
-    def get_layer_attns(self, model, sentence, layer=1, avg_heads=True, avg_queries=True):
+    def get_layer_attns(model, sentence, layer=1, avg_heads=True, avg_queries=True):
         outputs = model.predict([sentence], output_attentions=True, return_dict=True)
         import pdb; pdb.set_trace()
     

@@ -13,7 +13,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--model_name', type=str, required=True, help='e.g. bert-base-uncased')
     commandLineParser.add_argument('--original_data', type=str, required=True, help='path to original data file')
     commandLineParser.add_argument('--attacked_data', type=str, required=True, help="path to attacked data file")
-    commandLineParser.add_argument('--out_dir', type=str, help="Dir to save generated histograms")
+    commandLineParser.add_argument('--out_dir', type=str, required=True, help="Dir to save generated histograms")
     commandLineParser.add_argument('--num_samples', type=int, default=20, help="Specify number of data samples to use")
     commandLineParser.add_argument('--layer', type=int, default=1, help="layer to analyze")
     args = commandLineParser.parse_args()
