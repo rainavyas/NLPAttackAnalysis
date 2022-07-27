@@ -19,7 +19,7 @@ if __name__ == "__main__":
     # Get command line arguments
     commandLineParser = argparse.ArgumentParser()
     commandLineParser.add_argument('--data_name', type=str, required=True, help='e.g. imdb')
-    commandLineParser.add_argument('--out_dir', type=str, required=True, help='e.g. ../imdb')
+    commandLineParser.add_argument('--out_dir', type=str, required=True, help='e.g. ../data_files/imdb')
     args = commandLineParser.parse_args()
 
     # Save the command run
