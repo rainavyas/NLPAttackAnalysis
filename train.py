@@ -24,7 +24,9 @@ if __name__ == "__main__":
     args = commandLineParser.parse_args()
 
     set_seeds(args.seed)
-    out_file = f'{args.out_dir}/{args.model_name}_{args.data_name}_seed{args.seed}.th'
+    data_name = args.data_dir_path
+    data_name = data_name.split('/')[-1]
+    out_file = f'{args.out_dir}/{args.model_name}_{data_name}_seed{args.seed}.th'
 
     # Save the command run
     if not os.path.isdir('CMDs'):
