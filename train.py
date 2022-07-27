@@ -42,6 +42,7 @@ if __name__ == "__main__":
 
     # Load the training data
     sentences, labels = select_data(data_dir_path=args.data_dir_path, part='train')
+    import pdb; pdb.set_trace()
 
     # Initialise model
     model = select_model(args.model_name)
