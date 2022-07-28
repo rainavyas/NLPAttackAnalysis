@@ -31,7 +31,7 @@ class AttentionAnalyzer():
         # get tokens
         tkns_original = self.model.tokenizer.tokenize(sent_original)
         tkns_attacked = self.model.tokenizer.tokenize(sent_attacked)
-        print(tkns_original)
+        print('tkns', len(tkns_original))
 
         # identify positions of difference
         pass
@@ -39,6 +39,8 @@ class AttentionAnalyzer():
         # Extract attention weights
         attns_original = self.get_layer_attns(self.model, sent_original, layer=layer).tolist()
         attns_attacked = self.get_layer_attns(self.model, sent_attacked, layer=layer).tolist()
+        print(attns_original)
+        print('attns', len(attns_original))
 
         # Generate plot
         self.plot_attn_histogram(tkns_original, tkns_attacked, attns_original, attns_attacked, out_path_root)
