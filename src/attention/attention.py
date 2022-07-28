@@ -1,4 +1,5 @@
 import torch
+import matplotlib.pyplot as plt
 
 class AttentionAnalyzer():
     def __init__(self, model=None):
@@ -22,7 +23,11 @@ class AttentionAnalyzer():
         '''
         Return
         '''
-        pass
+        out_file = f'{out_path_root}_original.png'
+        plt.bar(tkns_original, attns_original)
+
+        plt.savefig(out_file, bbox_inches='tight')
+        plt.clf()
 
     def visualize_attack(self, sent_original, sent_attacked, out_path_root, layer=1, avg_heads=True, avg_queries=True):
         '''
