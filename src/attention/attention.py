@@ -25,7 +25,13 @@ class AttentionAnalyzer():
         '''
         out_file = f'{out_path_root}_original.png'
         plt.bar(tkns_original, attns_original)
-
+        plt.xticks(rotation = 90, fontsize='xx-small')
+        plt.savefig(out_file, bbox_inches='tight')
+        plt.clf()
+    
+        out_file = f'{out_path_root}_attacked.png'
+        plt.bar(tkns_attacked, attns_attacked)
+        plt.xticks(rotation = 90, fontsize='xx-small')
         plt.savefig(out_file, bbox_inches='tight')
         plt.clf()
 
