@@ -29,9 +29,9 @@ class AttentionAnalyzer():
         Generate histogram
         '''
         # get tokens
-        tkns_original = self.model.tokenizer.tokenize(sent_original)
-        tkns_attacked = self.model.tokenizer.tokenize(sent_attacked)
-        print('tkns', len(tkns_original))
+        tkns_original = ['START'] + self.model.tokenizer.tokenize(sent_original) + ['END']
+        tkns_attacked = ['START'] + self.model.tokenizer.tokenize(sent_attacked) + ['END']
+
 
         # identify positions of difference
         pass
@@ -39,9 +39,9 @@ class AttentionAnalyzer():
         # Extract attention weights
         attns_original = self.get_layer_attns(self.model, sent_original, layer=layer).tolist()
         attns_attacked = self.get_layer_attns(self.model, sent_attacked, layer=layer).tolist()
-        print('attns', len(attns_original))
-
+        
         # Generate plot
+        assert len(tkns_original) == len(attns_original), "Mismatch in num tokens and attn weights"
         self.plot_attn_histogram(tkns_original, tkns_attacked, attns_original, attns_attacked, out_path_root)
 
 
