@@ -39,7 +39,6 @@ class AttentionAnalyzer():
         # Extract attention weights
         attns_original = self.get_layer_attns(self.model, sent_original, layer=layer).tolist()
         attns_attacked = self.get_layer_attns(self.model, sent_attacked, layer=layer).tolist()
-        print(attns_original)
         print('attns', len(attns_original))
 
         # Generate plot
