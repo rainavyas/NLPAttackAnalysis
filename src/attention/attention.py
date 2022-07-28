@@ -40,9 +40,10 @@ class AttentionAnalyzer():
         Generate histogram
         '''
         # get tokens
-        tkns_original = ['START'] + self.model.tokenizer.tokenize(sent_original) + ['END']
-        tkns_attacked = ['START'] + self.model.tokenizer.tokenize(sent_attacked) + ['END']
-
+        # tkns_original = ['START'] + self.model.tokenizer.tokenize(sent_original) + ['END']
+        # tkns_attacked = ['START'] + self.model.tokenizer.tokenize(sent_attacked) + ['END']
+        tkns_original = self.model.tokenizer.tokenize(sent_original, add_special_tokens=True)
+        tkns_attacked = self.model.tokenizer.tokenize(sent_attacked, add_special_tokens=True)
 
         # identify positions of difference
         pass
