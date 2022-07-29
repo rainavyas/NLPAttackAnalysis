@@ -3,9 +3,11 @@
          https://textattack.readthedocs.io/en/latest/1start/attacks4Components.html
 '''
 
+import torch
 import textattack
 from model_wrapper import PyTorchModelWrapper
 from .redefined_textattack_models import DeepWordBugGao2018
+
 
 
 class Attacker():
@@ -23,5 +25,11 @@ class Attacker():
     def attack_sentence(self, sentence, label):
         attack_result = self.attack.attack(sentence, label)
         updated_sentence = attack_result.perturbed_text()
-        return updated_sentence
+
+        with torch.no_grad():
+            logits = self.model([sentence]).squeeze()
+            orig_pred_class = torch.argmax(logits)
+            logits = self.model([updated_sentence]).squeeze()
+            attacked_pred_class = torch.argmax(logits)
+        return updated_sentence, orig_pred_class, attacked_pred_class
 
