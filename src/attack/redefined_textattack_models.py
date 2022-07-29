@@ -14,7 +14,7 @@ from textattack.transformations import (
     WordSwapRandomCharacterSubstitution,
 )
 
-from .attack_recipe import AttackRecipe
+from textattack.attack_recipes.attack_recipe import AttackRecipe
 
 class DeepWordBugGao2018(AttackRecipe):
     """Gao, Lanchantin, Soffa, Qi.
