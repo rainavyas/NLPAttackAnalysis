@@ -46,8 +46,7 @@ class DeepWordBugGao2018(AttackRecipe):
             )
         else:
             # We use the Combined Score and the Substitution Transformer to generate
-            # adversarial samples, with the maximum edit distance difference of 30
-            # (ϵ = 30).
+            # adversarial samples, with the maximum edit distance difference of levenstein_dist.
             transformation = WordSwapRandomCharacterSubstitution()
         #
         # Don't modify the same word twice or stopwords
