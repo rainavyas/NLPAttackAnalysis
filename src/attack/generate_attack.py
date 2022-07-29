@@ -5,7 +5,7 @@
 
 import torch
 import textattack
-from textattack.models.wrappers.pytorch_model_wrapper.PyTorchModelWrapper import PyTorchModelWrapper
+from textattack.models.wrappers.pytorch_model_wrapper import PyTorchModelWrapper
 from .redefined_textattack_models import DeepWordBugGao2018
 
 
