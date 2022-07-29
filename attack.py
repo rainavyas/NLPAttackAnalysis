@@ -2,7 +2,6 @@
 Generate attack outputs
 '''
 
-from socket import send_fds
 import sys
 import os
 import argparse
@@ -18,7 +17,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--model_path', type=str, required=True, help='Specify path to saved model')
     commandLineParser.add_argument('--model_name', type=str, required=True, help='e.g. bert-base-uncased')
     commandLineParser.add_argument('--data_dir_path', type=str, required=True, help='path to data directory')
-    commandLineParser.add_argument('--out_dir_path', type=str, required=True, help='e.g. src/data/imdb/attacks/pwws')
+    commandLineParser.add_argument('--out_dir_path', type=str, required=True, help='e.g. src/data/data_files/imdb/attacks/pwws')
     commandLineParser.add_argument('--part', type=str, default='test', help="part of data")
     commandLineParser.add_argument('--constraint', type=float, default=-1.0, help="threshold for specific attack")
     commandLineParser.add_argument('--seed', type=int, default=1, help="Specify seed")
