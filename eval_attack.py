@@ -32,4 +32,4 @@ if __name__ == "__main__":
 
     # Evaluate attack
     fooling_rate = Attacker.fooling_rate(o_pred, a_pred, labels)
-    print(f'Fooling Rate:\t{fooling_rate*100}')
+    print(f'Fooling Rate:\t{fooling_rate*100}\%')
