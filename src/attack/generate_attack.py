@@ -32,4 +32,21 @@ class Attacker():
             logits = self.model([updated_sentence]).squeeze()
             attacked_pred_class = torch.argmax(logits)
         return updated_sentence, orig_pred_class, attacked_pred_class
+    
+    @staticmethod
+    def fooling_rate(o_preds, a_preds, labels):
+        '''
+        Fraction of correctly classified points that are mis-classified after attack
+        '''
+        total = 0
+        fooled = 0
+        for o,a,l in zip(o_preds, a_preds, labels):
+            if o == l:
+                total += 1
+                if o != a:
+                    fooled += 1
+        if total == 0:
+            return 0
+        return fooled/total
+
 

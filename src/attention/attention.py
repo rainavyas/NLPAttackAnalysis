@@ -6,10 +6,12 @@ class AttentionAnalyzer():
         self.model = model
     
     @staticmethod
-    def get_layer_attns(model, sentence, layer=1, avg_heads=True, avg_queries=True):
+    def get_layer_attns(model, sentence, layer=1, avg_heads=True, avg_queries=True, only_CLS=False):
         outputs = model.predict([sentence], output_attentions=True, return_dict=True)
         attentions = outputs['attentions']
         att = attentions[layer-1].squeeze()
+        if only_CLS:
+            att = att[:,0,:]
         if avg_heads:
             att = torch.mean(att, dim=0, keepdim=True)
         if avg_queries:
