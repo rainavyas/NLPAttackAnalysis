@@ -1,6 +1,6 @@
 from .select_data import select_data
 
-def select_attacked_data(data_dir_path='./src/data/imdb',
+def select_attacked_data(data_dir_path='./src/data/data_files/imdb',
                              attack_data_dir_path='src/data/data_files/imdb/attacks/bert/pwws', part='test'):
 
     o_sen, labels = select_data(data_dir_path=data_dir_path, part=part)
