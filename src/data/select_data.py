@@ -1,4 +1,4 @@
-def select_data(data_dir_path='./src/data/imdb', part='train'):
+def select_data(data_dir_path='./src/data/data_files/imdb', part='train'):
 
     with open(f'{data_dir_path}/{part}_sentences.txt') as f:
         sentences = f.readlines()
