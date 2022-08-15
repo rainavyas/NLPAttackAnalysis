@@ -7,6 +7,8 @@ import torch
 import textattack
 from textattack.models.wrappers.pytorch_model_wrapper import PyTorchModelWrapper
 from .redefined_textattack_models import DeepWordBugGao2018
+from collections import defaultdict
+import numpy as np
 
 
 
@@ -33,20 +35,42 @@ class Attacker():
             attacked_pred_class = torch.argmax(logits)
         return updated_sentence, orig_pred_class, attacked_pred_class
     
-    @staticmethod
-    def fooling_rate(o_preds, a_preds, labels):
+    @classmethod
+    def fooling_rate(cls, o_preds, a_preds, labels):
         '''
         Fraction of correctly classified points that are mis-classified after attack
         '''
-        total = 0
-        fooled = 0
-        for o,a,l in zip(o_preds, a_preds, labels):
+        success, unsuccess = cls.get_success_and_unsuccess_attacks([0]*len(o_preds), [0]*len(o_preds), o_preds, a_preds, labels)
+        fool_rate = len(success['labels'])/(len(success['labels']) + len(unsuccess['labels']))
+        return fool_rate
+    
+    @staticmethod
+    def get_success_and_unsuccess_attacks(o_sens, a_sens, o_preds, a_preds, labels):
+        '''
+        Filters out mis-classified samples
+        Splits data into successful and unsuccessful attacks
+        '''
+        # o_sens = np.array(o_sens)
+        # a_sens = np.array(a_sens)
+        o_preds = np.array(o_preds)
+        a_preds = np.array(a_preds)
+        labels = np.array(labels)
+        s_inds = []
+        u_inds = []
+        
+        for ind, (o,a,l) in enumerate(zip(o_preds, a_preds, labels)):
             if o == l:
-                total += 1
                 if o != a:
-                    fooled += 1
-        if total == 0:
-            return 0
-        return fooled/total
+                    s_inds.append(ind)
+                else:
+                    u_inds.append(ind)
+
+        s_o_sens = [o_sens[i] for i in s_inds]
+        s_a_sens = [a_sens[i] for i in s_inds]
+        u_o_sens = [o_sens[i] for i in u_inds]
+        u_a_sens = [a_sens[i] for i in u_inds]
+        success = {'o_sens':s_o_sens, 'a_sens':s_a_sens, 'o_preds':o_preds[s_inds], 'a_preds':a_preds[s_inds], 'labels':labels[s_inds]}
+        unsuccess = {'o_sens':u_o_sens, 'a_sens':u_a_sens, 'o_preds':o_preds[u_inds], 'a_preds':a_preds[u_inds], 'labels':labels[u_inds]}
+        return success, unsuccess
 
 
