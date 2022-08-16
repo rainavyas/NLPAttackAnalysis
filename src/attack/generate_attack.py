@@ -19,7 +19,7 @@ class Attacker():
         if attack_recipe == 'pwws':
             # no constraint enforced as imperceptibility defined by synonym substitution
             self.attack = textattack.attack_recipes.pwws_ren_2019.PWWSRen2019.build(model_wrapper)
-        elif attack_recipe == 'bae':
+        elif attack_recipe == 'deepwordbug':
             if not lev_dist_constraint:
                 self.attack = DeepWordBugGao2018.build(model_wrapper)
             else:
@@ -33,9 +33,9 @@ class Attacker():
         print(updated_sentence)
 
         with torch.no_grad():
-            logits = self.model.predict([sentence]).squeeze()
+            logits = self.model.predict([sentence])[0].squeeze()
             orig_pred_class = torch.argmax(logits)
-            logits = self.model.predict([updated_sentence]).squeeze()
+            logits = self.model.predict([updated_sentence])[0].squeeze()
             attacked_pred_class = torch.argmax(logits)
         return updated_sentence, orig_pred_class, attacked_pred_class
     
