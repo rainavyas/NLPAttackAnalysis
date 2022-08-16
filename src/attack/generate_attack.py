@@ -28,6 +28,7 @@ class Attacker():
     def attack_sentence(self, sentence, label):
         attack_result = self.attack.attack(sentence, label)
         updated_sentence = attack_result.perturbed_text()
+        print("here")
 
         with torch.no_grad():
             logits = self.model([sentence]).squeeze()
