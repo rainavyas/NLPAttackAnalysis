@@ -57,7 +57,7 @@ if __name__ == "__main__":
     for i, (sentence, label) in enumerate(zip(sentences, labels)):
         print(f'On {i}/{len(sentences)}')
         attacked_sentence, orig_pred_class, attacked_pred_class = attacker.attack_sentence(sentence, label)
-        attacked_predictions.append(attacked_sentence+'\n')
+        attacked_sentences.append(attacked_sentence+'\n')
         original_predictions.append(str(orig_pred_class)+'\n')
         attacked_predictions.append(str(attacked_pred_class)+'\n')
         print(f'Original: {sentence}')
