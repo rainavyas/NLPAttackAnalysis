@@ -8,8 +8,8 @@ class SequenceClassifier(nn.Module):
         self.model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=num_labels)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
     
-    def forward(self, input_ids, attention_mask):
-        return self.model(input_ids, attention_mask)[0]
+    def forward(self, input_ids, attention_mask=None):
+        return self.model(input_ids, attention_mask=attention_mask)[0]
     
     def predict(self, sentences, output_attentions=False, output_hidden_states=False, return_dict=False):
         inputs = self.tokenizer(sentences, padding=True, max_length=512, truncation=True, return_tensors="pt")
