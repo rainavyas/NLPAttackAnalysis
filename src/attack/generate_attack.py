@@ -5,7 +5,7 @@
 
 import torch
 import textattack
-from .model.wrapper import PyTorchModelWrapper
+from .model_wrapper import PyTorchModelWrapper
 from .redefined_textattack_models import DeepWordBugGao2018
 from collections import defaultdict
 import numpy as np
