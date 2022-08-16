@@ -14,6 +14,7 @@ import numpy as np
 
 class Attacker():
     def __init__(self, model, attack_recipe='pwws', use_constraint=None, lev_dist_constraint=None):
+        self.model = model
         model_wrapper = PyTorchModelWrapper(model, model.tokenizer)
         if attack_recipe == 'pwws':
             # no constraint enforced as imperceptibility defined by synonym substitution
