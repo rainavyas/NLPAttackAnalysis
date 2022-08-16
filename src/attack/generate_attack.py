@@ -26,9 +26,11 @@ class Attacker():
                 self.attack = DeepWordBugGao2018.build(model_wrapper, levenstein_dist=lev_dist_constraint)
 
     def attack_sentence(self, sentence, label):
+        print(sentence)
+        print()
         attack_result = self.attack.attack(sentence, label)
         updated_sentence = attack_result.perturbed_text()
-        print("here")
+        print(updated_sentence)
 
         with torch.no_grad():
             logits = self.model.predict([sentence]).squeeze()
