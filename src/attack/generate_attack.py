@@ -31,7 +31,6 @@ class Attacker():
                 self.attack = TextFoolerJin2019.build(model_wrapper, use_constraint=use_constraint)
 
     def attack_sentence(self, sentence, label):
-        print()
         attack_result = self.attack.attack(sentence, label)
         updated_sentence = attack_result.perturbed_text()
 
