@@ -67,9 +67,9 @@ if __name__ == "__main__":
         print()
     
     # save
-    with open(f'{args.data_dir_path}/{args.batch_ind}_{args.part}_attacked_sentences.txt', 'w') as f:
+    with open(f'{args.out_dir_path}/{args.batch_ind}_{args.part}_attacked_sentences.txt', 'w') as f:
         f.writelines(attacked_sentences)
-    with open(f'{args.data_dir_path}/{args.batch_ind}_{args.part}_original_predictions.txt', 'w') as f:
+    with open(f'{args.out_dir_path}/{args.batch_ind}_{args.part}_original_predictions.txt', 'w') as f:
         f.writelines(original_predictions)
-    with open(f'{args.data_dir_path}/{args.batch_ind}_{args.part}_attacked_predictions.txt', 'w') as f:
+    with open(f'{args.out_dir_path}/{args.batch_ind}_{args.part}_attacked_predictions.txt', 'w') as f:
         f.writelines(attacked_predictions)
