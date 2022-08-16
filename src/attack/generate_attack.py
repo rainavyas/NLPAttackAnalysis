@@ -6,7 +6,7 @@
 import torch
 import textattack
 from .model_wrapper import PyTorchModelWrapper
-from .redefined_textattack_models import DeepWordBugGao2018
+from .redefined_textattack_models import DeepWordBugGao2018, TextFoolerJin2019
 from collections import defaultdict
 import numpy as np
 
@@ -24,13 +24,16 @@ class Attacker():
                 self.attack = DeepWordBugGao2018.build(model_wrapper)
             else:
                 self.attack = DeepWordBugGao2018.build(model_wrapper, levenstein_dist=lev_dist_constraint)
+        elif attack_recipe == 'textfooler':
+            if not use_constraint:
+                self.attack = TextFoolerJin2019.build(model_wrapper)
+            else:
+                self.attack = TextFoolerJin2019.build(model_wrapper, use_constraint=use_constraint)
 
     def attack_sentence(self, sentence, label):
-        print(sentence)
         print()
         attack_result = self.attack.attack(sentence, label)
         updated_sentence = attack_result.perturbed_text()
-        print(updated_sentence)
 
         with torch.no_grad():
             logits = self.model.predict([sentence])[0].squeeze()

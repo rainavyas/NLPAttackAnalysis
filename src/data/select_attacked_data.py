@@ -17,4 +17,6 @@ def select_attacked_data(data_dir_path='./src/data/data_files/imdb',
         a_pred = f.readlines()
     a_pred = [int(l.rstrip('\n')) for l in a_pred]
 
+    # filter out all samples for which we were unable to get attacks
+
     return o_sen, a_sen, o_pred, a_pred, labels

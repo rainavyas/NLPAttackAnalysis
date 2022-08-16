@@ -1,7 +1,6 @@
 '''
-Generate attack outputs - this is too slow to run over entire dataset - use batch version
+attack select batches of the data
 '''
-
 import sys
 import os
 import argparse
@@ -17,18 +16,20 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--model_path', type=str, required=True, help='Specify path to saved model')
     commandLineParser.add_argument('--model_name', type=str, required=True, help='e.g. bert-base-uncased')
     commandLineParser.add_argument('--data_dir_path', type=str, required=True, help='e.g. src/data/data_files/imdb')
-    commandLineParser.add_argument('--out_dir_path', type=str, required=True, help='e.g. src/data/data_files/imdb/attacks/bert/pwws')
+    commandLineParser.add_argument('--out_dir_path', type=str, required=True, help='e.g. src/data/data_files/imdb/attacks/bert/pwws/batch_output')
     commandLineParser.add_argument('--attack_recipe', type=str, required=True, help='e.g. pwws')
     commandLineParser.add_argument('--part', type=str, default='test', help="part of data")
     commandLineParser.add_argument('--lev_dist_constraint', type=float, default=-1.0, help="threshold for specific attack")
     commandLineParser.add_argument('--use_constraint', type=float, default=-1.0, help="threshold for specific attack")
     commandLineParser.add_argument('--seed', type=int, default=1, help="Specify seed")
+    commandLineParser.add_argument('--batch_ind', type=int, default=0, help="Specify batch number")
+    commandLineParser.add_argument('--batch_size', type=int, default=50, help="Specify batch size")
     args = commandLineParser.parse_args()
 
     # Save the command run
     if not os.path.isdir('CMDs'):
         os.mkdir('CMDs')
-    with open('CMDs/attack.cmd', 'a') as f:
+    with open('CMDs/attack_batch.cmd', 'a') as f:
         f.write(' '.join(sys.argv)+'\n')
     
     set_seeds(args.seed)
@@ -42,6 +43,10 @@ if __name__ == "__main__":
 
     # Load the test data
     sentences, labels = select_data(data_dir_path=args.data_dir_path, part=args.part)
+    start = args.batch_ind * args.batch_size
+    end = (args.batch_ind + 1) * args.batch_size
+    sentences = sentences[start:end]
+    labels = labels[start:end]
 
     # Attack
     attacker = Attacker(model, attack_recipe=args.attack_recipe,
@@ -62,9 +67,9 @@ if __name__ == "__main__":
         print()
     
     # save
-    with open(f'{args.data_dir_path}/{args.part}_attacked_sentences.txt', 'w') as f:
+    with open(f'{args.data_dir_path}/{args.batch_ind}_{args.part}_attacked_sentences.txt', 'w') as f:
         f.writelines(attacked_sentences)
-    with open(f'{args.data_dir_path}/{args.part}_original_predictions.txt', 'w') as f:
+    with open(f'{args.data_dir_path}/{args.batch_ind}_{args.part}_original_predictions.txt', 'w') as f:
         f.writelines(original_predictions)
-    with open(f'{args.data_dir_path}/{args.part}_attacked_predictions.txt', 'w') as f:
+    with open(f'{args.data_dir_path}/{args.batch_ind}_{args.part}_attacked_predictions.txt', 'w') as f:
         f.writelines(attacked_predictions)
