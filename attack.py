@@ -21,6 +21,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--attack_recipe', type=str, required=True, help='e.g. pwws')
     commandLineParser.add_argument('--part', type=str, default='test', help="part of data")
     commandLineParser.add_argument('--lev_dist_constraint', type=float, default=-1.0, help="threshold for specific attack")
+    commandLineParser.add_argument('--use_constraint', type=float, default=-1.0, help="threshold for specific attack")
     commandLineParser.add_argument('--seed', type=int, default=1, help="Specify seed")
     args = commandLineParser.parse_args()
 
@@ -33,6 +34,8 @@ if __name__ == "__main__":
     set_seeds(args.seed)
     if args.lev_dist_constraint == -1.0:
         lev_dist_constraint = None
+    if args.use_constraint == -1.0:
+        use_constraint = None
 
     # Load model
     model = select_model(args.model_name, model_path=args.model_path)
@@ -41,11 +44,12 @@ if __name__ == "__main__":
     sentences, labels = select_data(data_dir_path=args.data_dir_path, part=args.part)
 
     # Attack
-    attacker = Attacker(model, attack_recipe=args.attack_recipe)
+    attacker = Attacker(model, attack_recipe=args.attack_recipe,
+                         use_constraint=use_constraint, lev_dist_constraint=lev_dist_constraint)
     attacked_sentences = []
     original_predictions = []
     attacked_predictions = []
-    for i, (sentence, label) in enumerate(zip(sentences,  labels, lev_dist_constraint=lev_dist_constraint)):
+    for i, (sentence, label) in enumerate(zip(sentences,  labels)):
         print(f'On {i}/{len(sentences)}')
         attacked_sentence, orig_pred_class, attacked_pred_class = attacker.attack_sentence(sentence, label)
         attacked_predictions.append(attacked_sentence+'\n')
