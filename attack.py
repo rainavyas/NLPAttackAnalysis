@@ -18,6 +18,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--model_name', type=str, required=True, help='e.g. bert-base-uncased')
     commandLineParser.add_argument('--data_dir_path', type=str, required=True, help='e.g. src/data/data_files/imdb')
     commandLineParser.add_argument('--out_dir_path', type=str, required=True, help='e.g. src/data/data_files/imdb/attacks/bert/pwws')
+    commandLineParser.add_argument('--attack_recipe', type=str, required=True, help='e.g. pwws')
     commandLineParser.add_argument('--part', type=str, default='test', help="part of data")
     commandLineParser.add_argument('--lev_dist_constraint', type=float, default=-1.0, help="threshold for specific attack")
     commandLineParser.add_argument('--seed', type=int, default=1, help="Specify seed")
@@ -40,7 +41,7 @@ if __name__ == "__main__":
     sentences, labels = select_data(data_dir_path=args.data_dir_path, part=args.part)
 
     # Attack
-    attacker = Attacker(model, attack_recipe='pwws')
+    attacker = Attacker(model, attack_recipe=args.attack_recipe)
     attacked_sentences = []
     original_predictions = []
     attacked_predictions = []

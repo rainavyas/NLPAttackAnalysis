@@ -17,7 +17,6 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--data_dir_path', type=str, required=True, help='e.g. src/data/data_files/imdb')
     commandLineParser.add_argument('--attack_dir_path', type=str, required=True, help='e.g. src/data/data_files/imdb/attacks/bert/pwws')
     commandLineParser.add_argument('--part', type=str, default='test', help="part of data")
-
     args = commandLineParser.parse_args()
 
     # Save the command run
