@@ -14,7 +14,6 @@ if __name__ == "__main__":
     commandLineParser = argparse.ArgumentParser()
     commandLineParser.add_argument('--model_path', type=str, required=True, help='Specify path to saved model')
     commandLineParser.add_argument('--model_name', type=str, required=True, help='e.g. bert-base-uncased')
-    commandLineParser.add_argument('--data_dir_path', type=str, required=True, help='e.g. src/data/data_files/imdb')
     commandLineParser.add_argument('--attack_dir_path', type=str, required=True, help='e.g. src/data/data_files/imdb/attacks/bert/pwws')
     commandLineParser.add_argument('--part', type=str, default='test', help="part of data")
     args = commandLineParser.parse_args()
@@ -27,7 +26,7 @@ if __name__ == "__main__":
     
 
     # Load all data
-    _, _, o_pred, a_pred, labels = select_attacked_data(args.data_dir_path, args.attack_dir_path, args.part)
+    _, _, o_pred, a_pred, labels = select_attacked_data(args.attack_dir_path, args.part)
 
     # Evaluate attack
     fooling_rate = Attacker.fooling_rate(o_pred, a_pred, labels)
