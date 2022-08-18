@@ -7,7 +7,6 @@ import torch
 import textattack
 from .model_wrapper import PyTorchModelWrapper
 from .redefined_textattack_models import DeepWordBugGao2018, TextFoolerJin2019
-from collections import defaultdict
 import numpy as np
 
 
@@ -56,8 +55,6 @@ class Attacker():
         Filters out mis-classified samples
         Splits data into successful and unsuccessful attacks
         '''
-        # o_sens = np.array(o_sens)
-        # a_sens = np.array(a_sens)
         o_preds = np.array(o_preds)
         a_preds = np.array(a_preds)
         labels = np.array(labels)
