@@ -4,7 +4,7 @@ Transforms the output of attack_batch.py files into a single correctly ordered s
     - original_predictions.txt
     - attacked_predictions.txt
 
--> note: 'none' is placed for samples with no predictions - THIS NOT YET IMPLEMENTED
+-> note: 'none' is placed for samples with no predictions
 '''
 
 import sys
@@ -51,8 +51,8 @@ if __name__ == "__main__":
             original_predictions += vals
         except:
             attacked_sentences += ['none']*args.batch_size
-            attacked_predictions += [-1]*args.batch_size
-            original_predictions += [-1]*args.batch_size
+            attacked_predictions += ['-1']*args.batch_size
+            original_predictions += ['-1']*args.batch_size
     
     # save
     with open(f'{args.out_dir_path}/{args.part}_attacked_sentences.txt', 'w') as f:
