@@ -55,14 +55,12 @@ class Attacker():
         Filters out mis-classified samples
         Splits data into successful and unsuccessful attacks
         '''
-        print(len(labels))
         o_preds = np.array(o_preds)
         a_preds = np.array(a_preds)
         labels = np.array(labels)
         s_inds = []
         u_inds = []
-        print(len(labels))
-        print(labels)
+        
         for ind, (o,a,l) in enumerate(zip(o_preds, a_preds, labels)):
             if o == l:
                 if o != a:

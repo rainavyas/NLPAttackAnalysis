@@ -27,6 +27,8 @@ if __name__ == "__main__":
 
     # Load all data
     _, _, o_pred, a_pred, labels = select_attacked_data(args.attack_dir_path, args.part)
+    print(labels)
+    print(len(labels))
     print("loaded data")
 
     # Evaluate attack
