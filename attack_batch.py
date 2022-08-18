@@ -65,8 +65,14 @@ if __name__ == "__main__":
         print(f'Original prediction: {orig_pred_class}')
         print(f'Attacked prediction: {attacked_pred_class}')
         print()
+    original_sentences = [s+'\n' for s in sentences]
+    original_labels = [str(l) for l in labels]
     
     # save
+    with open(f'{args.out_dir_path}/{args.batch_ind}_{args.part}_original_sentences.txt', 'w') as f:
+        f.writelines(original_sentences)
+    with open(f'{args.out_dir_path}/{args.batch_ind}_{args.part}_original_labels.txt', 'w') as f:
+        f.writelines(original_labels)
     with open(f'{args.out_dir_path}/{args.batch_ind}_{args.part}_attacked_sentences.txt', 'w') as f:
         f.writelines(attacked_sentences)
     with open(f'{args.out_dir_path}/{args.batch_ind}_{args.part}_original_predictions.txt', 'w') as f:

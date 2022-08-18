@@ -3,8 +3,6 @@ Transforms the output of attack_batch.py files into a single correctly ordered s
     - attacked_sentences.txt
     - original_predictions.txt
     - attacked_predictions.txt
-
--> note: 'none' is placed for samples with no predictions
 '''
 
 import sys
@@ -55,6 +53,9 @@ if __name__ == "__main__":
             original_predictions += ['-1']*args.batch_size
     
     # save
+    attacked_sentences = [a+'\n' for a in attacked_sentences]
+    attacked_predictions = [a+'\n' for a in attacked_predictions]
+    original_predictions = [a+'\n' for a in original_predictions]
     with open(f'{args.out_dir_path}/{args.part}_attacked_sentences.txt', 'w') as f:
         f.writelines(attacked_sentences)
     with open(f'{args.out_dir_path}/{args.part}_original_predictions.txt', 'w') as f:
