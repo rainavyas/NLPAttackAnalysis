@@ -15,5 +15,7 @@ The `textattack` module causes errors when running on cclake hpc cpus. To avoid 
 
 Example here is for rotten tomatoes dataset
 
-1) 
-cd src/data/preprocess
+1) Load data: `cd src/data/preprocess` and then `python prepare_data_files.py --data_name rt --out_dir ../data_files/rt`
+2) Train: `python train.py --out_dir experiments/trained_models/rt --model_name bert-base-uncased --data_dir_path src/data/data_files/rt --bs 8 --epochs 4 --lr 1e-5 --seed 1`
+3) Attack in batches: `cd experiments` and then `sbatch ./submit_array.sh --model_path ./trained_models/rt/bert-base-uncased_rt_seed1.th --model_name bert-base-uncased --data_dir_path ../src/data/data_files/rt --out_dir_path ../src/data/data_files/rt/attacks/bert/pwws/batch_output --attack_recipe pwws --part test`
+4) Combine batch output into single file:
