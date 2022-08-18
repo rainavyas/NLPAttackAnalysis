@@ -60,9 +60,9 @@ class Attacker():
         labels = np.array(labels)
         s_inds = []
         u_inds = []
-        
+        print(len(labels))
+        print(labels)
         for ind, (o,a,l) in enumerate(zip(o_preds, a_preds, labels)):
-            print(o, a, l)
             if o == l:
                 if o != a:
                     s_inds.append(ind)
