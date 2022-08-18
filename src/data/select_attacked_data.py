@@ -1,9 +1,12 @@
-from .select_data import select_data
+def select_attacked_data(attack_data_dir_path='src/data/data_files/imdb/attacks/bert/pwws', part='test'):
 
-def select_attacked_data(data_dir_path='./src/data/data_files/imdb',
-                             attack_data_dir_path='src/data/data_files/imdb/attacks/bert/pwws', part='test'):
+    with open(f'{attack_data_dir_path}/{part}_original_sentences.txt') as f:
+        o_sen = f.readlines()
+    o_sen = [s.rstrip('\n') for s in o_sen]
 
-    o_sen, labels = select_data(data_dir_path=data_dir_path, part=part)
+    with open(f'{attack_data_dir_path}/{part}_original_labels.txt') as f:
+        labels = f.readlines()
+    labels = [int(l.rstrip('\n')) for l in labels]
 
     with open(f'{attack_data_dir_path}/{part}_attacked_sentences.txt') as f:
         a_sen = f.readlines()
