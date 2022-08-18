@@ -34,20 +34,25 @@ if __name__ == "__main__":
     original_predictions = []
     for i in range(args.num_files):
 
-        with open(f'{args.batch_dir_path}/{i}_{args.part}_attacked_sentences.txt', 'r') as f:
-            vals = f.readlines()
-        vals = [s.rstrip('\n') for s in vals]
-        attacked_sentences += vals
+        try:
+            with open(f'{args.batch_dir_path}/{i}_{args.part}_attacked_sentences.txt', 'r') as f:
+                vals = f.readlines()
+            vals = [s.rstrip('\n') for s in vals]
+            attacked_sentences += vals
 
-        with open(f'{args.batch_dir_path}/{i}_{args.part}_attacked_predictions.txt', 'r') as f:
-            vals = f.readlines()
-        vals = [s.rstrip('\n') for s in vals]
-        attacked_predictions += vals
+            with open(f'{args.batch_dir_path}/{i}_{args.part}_attacked_predictions.txt', 'r') as f:
+                vals = f.readlines()
+            vals = [s.rstrip('\n') for s in vals]
+            attacked_predictions += vals
 
-        with open(f'{args.batch_dir_path}/{i}_{args.part}_original_predictions.txt', 'r') as f:
-            vals = f.readlines()
-        vals = [s.rstrip('\n') for s in vals]
-        original_predictions += vals
+            with open(f'{args.batch_dir_path}/{i}_{args.part}_original_predictions.txt', 'r') as f:
+                vals = f.readlines()
+            vals = [s.rstrip('\n') for s in vals]
+            original_predictions += vals
+        except:
+            attacked_sentences += ['none']*args.batch_size
+            attacked_predictions += [-1]*args.batch_size
+            original_predictions += [-1]*args.batch_size
     
     # save
     with open(f'{args.out_dir_path}/{args.part}_attacked_sentences.txt', 'w') as f:
