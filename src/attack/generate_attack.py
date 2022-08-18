@@ -62,6 +62,7 @@ class Attacker():
         u_inds = []
         
         for ind, (o,a,l) in enumerate(zip(o_preds, a_preds, labels)):
+            print(o, a, l)
             if o == l:
                 if o != a:
                     s_inds.append(ind)
