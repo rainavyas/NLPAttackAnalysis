@@ -11,7 +11,6 @@ class AttentionAnalyzer():
         outputs = model.predict([sentence], output_attentions=True, return_dict=True)
         attentions = outputs['attentions']
         att = attentions[layer-1].squeeze()
-        print(att.size())
         if only_CLS:
             att = att[:,0,:]
         if avg_heads:
@@ -76,11 +75,11 @@ class AttentionAnalyzer():
         seq_length = len(tkns_original)
 
         # Extract attention weights
-        attns_original = self.get_layer_attns(self.model, sent_original, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()
-        attns_attacked = self.get_layer_attns(self.model, sent_attacked, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()
+        attns_original = self.get_layer_attns(self.model, sent_original, layer=layer, avg_heads=True, avg_queries=False, only_CLS=True).tolist()
+        attns_attacked = self.get_layer_attns(self.model, sent_attacked, layer=layer, avg_heads=True, avg_queries=False, only_CLS=True).tolist()
 
-        # match length of attn distributions
-        attns_original, attns_attacked = self._match_length(attns_original, attns_attacked)
+        # # match length of attn distributions
+        # attns_original, attns_attacked = self._match_length(attns_original, attns_attacked)
 
         # Calculate KL div
         kl_div = sum(rel_entr(attns_original, attns_attacked))
