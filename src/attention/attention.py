@@ -59,7 +59,8 @@ class AttentionAnalyzer():
     def attn_kl_div_all(self, o_sens, a_sens, layer=1):
         kls = []
         lengths = []
-        for o, a in zip(o_sens, a_sens):
+        for i, (o, a) in enumerate(zip(o_sens, a_sens)):
+            print(f'{i}/{len(o_sens)}')
             kl, l = self._attn_kl_div(o, a, layer=layer)
             kls.append(kl)
             lengths.append(l)
