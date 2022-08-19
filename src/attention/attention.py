@@ -10,9 +10,8 @@ class AttentionAnalyzer():
     def get_layer_attns(model, sentence, layer=1, avg_heads=True, avg_queries=True, only_CLS=False):
         outputs = model.predict([sentence], output_attentions=True, return_dict=True)
         attentions = outputs['attentions']
-        print('a', attentions.size())
         att = attentions[layer-1].squeeze()
-        print('b', att.size())
+        print(att.size())
         if only_CLS:
             att = att[:,0,:]
         if avg_heads:
