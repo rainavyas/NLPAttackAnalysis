@@ -95,7 +95,7 @@ class AttentionAnalyzer():
         else:
             tgt = lst2
         for _ in range(diff):
-            tgt.remove(min(lst1))
+            tgt.remove(min(tgt))
         return lst1, lst2
 
 
