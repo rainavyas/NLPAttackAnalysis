@@ -1,5 +1,6 @@
 import torch
 import matplotlib.pyplot as plt
+from scipy.special import rel_entr
 
 class AttentionAnalyzer():
     def __init__(self, model=None):
@@ -78,6 +79,7 @@ class AttentionAnalyzer():
         attns_attacked = self.get_layer_attns(self.model, sent_attacked, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()
 
         # Calculate KL div
+        kl_div = sum(rel_entr(attns_original, attns_attacked))
 
         # return KL div and length
         return kl_div, seq_length
