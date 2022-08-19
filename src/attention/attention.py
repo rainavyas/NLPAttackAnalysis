@@ -78,8 +78,8 @@ class AttentionAnalyzer():
         attns_original = self.get_layer_attns(self.model, sent_original, layer=layer, avg_heads=True, avg_queries=False, only_CLS=True).tolist()
         attns_attacked = self.get_layer_attns(self.model, sent_attacked, layer=layer, avg_heads=True, avg_queries=False, only_CLS=True).tolist()
 
-        # # match length of attn distributions
-        # attns_original, attns_attacked = self._match_length(attns_original, attns_attacked)
+        # match length of attn distributions
+        attns_original, attns_attacked = self._match_length(attns_original, attns_attacked)
 
         # Calculate KL div
         kl_div = sum(rel_entr(attns_original, attns_attacked))
