@@ -67,7 +67,7 @@ def nw(x, y, match = 1, mismatch = 1, gap = 1):
             rx.append('-')
             ry.append(y[j-1])
             j -= 1
-    # Reverse the strings.
-    rx = ''.join(rx)[::-1]
-    ry = ''.join(ry)[::-1]
+    # Reverse
+    rx = rx[::-1]
+    ry = ry[::-1]
     return rx, ry
