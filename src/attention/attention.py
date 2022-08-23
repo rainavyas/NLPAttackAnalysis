@@ -121,8 +121,6 @@ class AttentionAnalyzer():
         '''
         
         orig_seq, att_seq = nw([str(t) for t in tkns_orig], [str(t) for t in tkns_att])
-        print(orig_seq)
-        print(att_seq)
         
         new_attns_orig = []
         new_attns_att = []
