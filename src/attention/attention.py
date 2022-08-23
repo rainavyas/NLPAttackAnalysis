@@ -120,6 +120,7 @@ class AttentionAnalyzer():
             2) G  C  A  -  T  G  C  U        --->    GC A  T  G  C  U
         '''
         orig_seq, att_seq = nw(tkns_orig, tkns_att)
+        print(orig_seq, att_seq)
         
         new_attns_orig = []
         new_attns_att = []
