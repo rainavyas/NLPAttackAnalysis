@@ -79,8 +79,8 @@ class AttentionAnalyzer():
         Calculate KL divergence between original and attacked attention distribution
         '''
         # get tokens
-        tkns_original = self.model.tokenizer.tokenize(sent_original, add_special_tokens=True)
-        tkns_attacked = self.model.tokenizer.tokenize(sent_attacked, add_special_tokens=True)
+        tkns_original = self.model.tokenizer.encode(sent_original, add_special_tokens=True)
+        tkns_attacked = self.model.tokenizer.encode(sent_attacked, add_special_tokens=True)
         seq_length = len(tkns_original)
 
         # Extract attention weights
@@ -120,7 +120,6 @@ class AttentionAnalyzer():
             2) G  C  A  -  T  G  C  U        --->    GC A  T  G  C  U
         '''
         orig_seq, att_seq = nw(tkns_orig, tkns_att)
-        print(orig_seq, att_seq)
         
         new_attns_orig = []
         new_attns_att = []
