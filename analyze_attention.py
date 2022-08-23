@@ -52,14 +52,14 @@ if __name__ == "__main__":
     try:
         out_str += f'\nUnsuccessful attacks KL-div\t{mean(unsuccess_kls)}+-{stdev(unsuccess_kls)}'
     except:
-        out_str += 'No Unsuccessful Attacks'
+        out_str += '\nNo Unsuccessful Attacks'
     print(out_str)
 
     # log
     if args.log_dir != 'none':
         attack_items = args.attack_dir_path
         attack_items = '_'.join(attack_items.split('/')[-4:])
-        out_path = f'{args.log_dir}/{attack_items}_layer{args.layer}'
+        out_path = f'{args.log_dir}/{attack_items}_layer{args.layer}.txt'
         with open(out_path, 'w') as f:
             f.write(out_str)
 
