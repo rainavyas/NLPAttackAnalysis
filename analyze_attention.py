@@ -21,6 +21,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--model_path', type=str, required=True, help='Specify path to saved model')
     commandLineParser.add_argument('--model_name', type=str, required=True, help='e.g. bert-base-uncased')
     commandLineParser.add_argument('--attack_dir_path', type=str, required=True, help='e.g. src/data/data_files/imdb/attacks/bert/pwws')
+    commandLineParser.add_argument('--log_dir', type=str, default='none', help="Directory to log results, e.g. ./experiments/log_results/analyze_attention")
     commandLineParser.add_argument('--part', type=str, default='test', help="part of data")
     commandLineParser.add_argument('--layer', type=int, default=1, help="layer to analyze")
     args = commandLineParser.parse_args()
@@ -46,9 +47,15 @@ if __name__ == "__main__":
     analyzer = AttentionAnalyzer(model=model)
     success_kls, success_lengths = analyzer.attn_kl_div_all(success['o_sens'], success['a_sens'], layer=args.layer)
     unsuccess_kls, unsuccess_lengths = analyzer.attn_kl_div_all(unsuccess['o_sens'], unsuccess['a_sens'], layer=args.layer)
-    print(f'Successful attacks KL-div\t{mean(success_kls)}+-{stdev(success_kls)}')
-    print(f'Unsuccessful attacks KL-div\t{mean(unsuccess_kls)}+-{stdev(unsuccess_kls)}')
+    out_str = ''
+    out_str += f'\nSuccessful attacks KL-div\t{mean(success_kls)}+-{stdev(success_kls)}'
+    out_str += f'\nUnsuccessful attacks KL-div\t{mean(unsuccess_kls)}+-{stdev(unsuccess_kls)}'
+    print(out_str)
 
-    # Plot kl vs length for success and unsuccess
+    # log
+    if args.log_dir != 'none':
+        attack_items = args.attack_dir_path
+        attack_items = '_'.join(attack_items.split('/')[-4:])
+        out_path = f'{args.log_dir}/{attack_items}_layer{args.layer}'
 
     
