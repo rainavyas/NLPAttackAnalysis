@@ -1,4 +1,4 @@
-def select_attacked_data(attack_data_dir_path='src/data/data_files/imdb/attacks/bert/pwws', part='test'):
+def select_attacked_data(attack_data_dir_path='src/data/data_files/imdb/attacks/bert/pwws', part='test', num_items=None):
 
     with open(f'{attack_data_dir_path}/{part}_original_sentences.txt') as f:
         o_sen = f.readlines()
@@ -20,4 +20,4 @@ def select_attacked_data(attack_data_dir_path='src/data/data_files/imdb/attacks/
         a_pred = f.readlines()
     a_pred = [int(l.rstrip('\n')) for l in a_pred]
 
-    return o_sen, a_sen, o_pred, a_pred, labels
+    return o_sen[:num_items], a_sen[:num_items], o_pred[:num_items], a_pred[:num_items], labels[:num_items]
