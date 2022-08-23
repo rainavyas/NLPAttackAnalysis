@@ -40,7 +40,7 @@ if __name__ == "__main__":
     model.eval()
 
     # Load and filter data
-    o_sen, a_sen, o_pred, a_pred, labels = select_attacked_data(args.attack_dir_path, args.part, num_items=10) # temp
+    o_sen, a_sen, o_pred, a_pred, labels = select_attacked_data(args.attack_dir_path, args.part, num_items=5) # temp
     success, unsuccess = Attacker.get_success_and_unsuccess_attacks(o_sen, a_sen, o_pred, a_pred, labels)
 
     # Kl Divergence calculation
@@ -49,7 +49,10 @@ if __name__ == "__main__":
     unsuccess_kls, unsuccess_lengths = analyzer.attn_kl_div_all(unsuccess['o_sens'], unsuccess['a_sens'], layer=args.layer)
     out_str = ''
     out_str += f'\nSuccessful attacks KL-div\t{mean(success_kls)}+-{stdev(success_kls)}'
-    out_str += f'\nUnsuccessful attacks KL-div\t{mean(unsuccess_kls)}+-{stdev(unsuccess_kls)}'
+    try:
+        out_str += f'\nUnsuccessful attacks KL-div\t{mean(unsuccess_kls)}+-{stdev(unsuccess_kls)}'
+    except:
+        out_str += 'No Unsuccessful Attacks'
     print(out_str)
 
     # log
