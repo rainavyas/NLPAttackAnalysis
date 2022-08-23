@@ -57,5 +57,7 @@ if __name__ == "__main__":
         attack_items = args.attack_dir_path
         attack_items = '_'.join(attack_items.split('/')[-4:])
         out_path = f'{args.log_dir}/{attack_items}_layer{args.layer}'
+        with open(out_path, 'w') as f:
+            f.write(out_str)
 
     
