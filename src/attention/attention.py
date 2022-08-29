@@ -1,6 +1,8 @@
 import torch
 import matplotlib.pyplot as plt
 from scipy.special import rel_entr
+from scipy.stats import entropy
+
 from ..tools.nw import nw
 
 class AttentionAnalyzer():
@@ -57,9 +59,28 @@ class AttentionAnalyzer():
         assert len(tkns_original) == len(attns_original), "Mismatch in num tokens and attn weights"
         self.plot_attn_histogram(tkns_original, tkns_attacked, attns_original, attns_attacked, out_path_root)
     
+    def entropy_all(self, sens, layer=1, num_heads=12):
+        '''
+        Entropy of attn sequence at layer, averaged over heads
+        Uses CLS token as query for each attn
+        '''
+        ents = []
+        lengths = []
+        for i, sen in enumerate(sens):
+            print(f'{i}/{len(sens)}')
+            ent = 0
+            for h in range(num_heads):
+                enth, l = self._attn_entropy(sen, layer=layer, head=h)
+                ent += enth
+            ent = ent/num_heads
+            ents.append(ent)
+            lengths.append(l)
+        return ents, lengths
+    
     def attn_kl_div_all(self, o_sens, a_sens, layer=1, num_heads=12):
         '''
         For each orig-attack pair get KL div per layer, where KL avg over heads
+        Uses CLS token as query for each attn
         '''
         kls = []
         lengths = []
@@ -73,10 +94,20 @@ class AttentionAnalyzer():
             kls.append(kl)
             lengths.append(l)
         return kls, lengths
+    
+    def _attn_entropy(self, sent, layer=1, head=0):
+        '''
+        Calculate entropy of attn distribution at specified layer and head
+        Use CLS token as query for attn
+        '''
+        attns = self.get_layer_attns(self.model, sent, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
+        entropy = entropy(attns)
+        return entropy
 
     def _attn_kl_div(self, sent_original, sent_attacked, layer=1, head=0):
         '''
         Calculate KL divergence between original and attacked attention distribution
+        Use CLS token as query for attn
         '''
         # get tokens
         tkns_original = self.model.tokenizer.encode(sent_original, add_special_tokens=True)
@@ -96,16 +127,6 @@ class AttentionAnalyzer():
         # return KL div and length
         return kl_div, seq_length
     
-    # @staticmethod
-    # def _match_length(lst1, lst2):
-    #     diff = abs(len(lst1) - len(lst2))
-    #     if len(lst1) > len(lst2):
-    #         tgt = lst1 
-    #     else:
-    #         tgt = lst2
-    #     for _ in range(diff):
-    #         tgt.remove(min(tgt))
-    #     return lst1, lst2
     
     @staticmethod
     def _match_length(attns_orig, attns_att, tkns_orig, tkns_att):

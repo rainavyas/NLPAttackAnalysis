@@ -20,10 +20,14 @@ if __name__ == "__main__":
     commandLineParser = argparse.ArgumentParser()
     commandLineParser.add_argument('--model_path', type=str, required=True, help='Specify path to saved model')
     commandLineParser.add_argument('--model_name', type=str, required=True, help='e.g. bert-base-uncased')
-    commandLineParser.add_argument('--attack_dir_path', type=str, required=True, help='e.g. src/data/data_files/imdb/attacks/bert/pwws')
+    commandLineParser.add_argument('--attack_dir_path', type=str, required=True, help='e.g. src/data/data_files/rt/attacks/bert/pwws')
     commandLineParser.add_argument('--log_dir', type=str, default='none', help="Directory to log results, e.g. ./experiments/log_results/analyze_attention")
     commandLineParser.add_argument('--part', type=str, default='test', help="part of data")
     commandLineParser.add_argument('--layer', type=int, default=1, help="layer to analyze")
+    commandLineParser.add_argument('--KL_off', action='store_true', help="Specifiy to turn off KL div calculation")
+    commandLineParser.add_argument('--entropy_off', action='store_true', help="Specifiy to turn off entropy calculation")
+    
+
     args = commandLineParser.parse_args()
 
     # Save the command run
@@ -43,16 +47,35 @@ if __name__ == "__main__":
     o_sen, a_sen, o_pred, a_pred, labels = select_attacked_data(args.attack_dir_path, args.part)
     success, unsuccess = Attacker.get_success_and_unsuccess_attacks(o_sen, a_sen, o_pred, a_pred, labels)
 
-    # Kl Divergence calculation
     analyzer = AttentionAnalyzer(model=model)
-    success_kls, success_lengths = analyzer.attn_kl_div_all(success['o_sens'], success['a_sens'], layer=args.layer)
-    unsuccess_kls, unsuccess_lengths = analyzer.attn_kl_div_all(unsuccess['o_sens'], unsuccess['a_sens'], layer=args.layer)
     out_str = ''
-    out_str += f'\nSuccessful attacks KL-div\t{mean(success_kls)}+-{stdev(success_kls)}'
-    try:
-        out_str += f'\nUnsuccessful attacks KL-div\t{mean(unsuccess_kls)}+-{stdev(unsuccess_kls)}'
-    except:
-        out_str += '\nNo Unsuccessful Attacks'
+
+    # Kl Divergence calculation
+    if not args.KL_off:
+        success_kls, success_lengths = analyzer.attn_kl_div_all(success['o_sens'], success['a_sens'], layer=args.layer)
+        unsuccess_kls, unsuccess_lengths = analyzer.attn_kl_div_all(unsuccess['o_sens'], unsuccess['a_sens'], layer=args.layer)
+
+        out_str += f'\nSuccessful attacks KL-div\t{mean(success_kls)}+-{stdev(success_kls)}'
+        try:
+            out_str += f'\nUnsuccessful attacks KL-div\t{mean(unsuccess_kls)}+-{stdev(unsuccess_kls)}\n\n'
+        except:
+            out_str += '\nNo Unsuccessful Attacks\n\n'
+
+    # Entropy calculation
+    if not args.entropy_off:
+        success_orig_ents, _ = analyzer.entropy_all(success['o_sens'], layer=args.layer)
+        success_att_ents, _ = analyzer.entropy_all(success['a_sens'], layer=args.layer)
+        unsuccess_orig_ents, _ = analyzer.entropy_all(unsuccess['o_sens'], layer=args.layer)
+        unsuccess_att_ents, _ = analyzer.entropy_all(unsuccess['a_sens'], layer=args.layer)
+
+        out_str += f'\nSuccessful-Original attn entropy\t{mean(success_orig_ents)}+-{stdev(success_orig_ents)}'
+        out_str += f'\nSuccessful-Attack attn entropy\t{mean(success_att_ents)}+-{stdev(success_att_ents)}'
+        try:
+            out_str += f'\nUnsuccessful-Original attn entropy\t{mean(unsuccess_orig_ents)}+-{stdev(unsuccess_orig_ents)}'
+            out_str += f'\nUnsuccessful-Attack attn entropy\t{mean(unsuccess_att_ents)}+-{stdev(unsuccess_att_ents)}\n\n'
+        except:
+            out_str += '\nNo Unsuccessful Attacks\n\n'
+
     print(out_str)
 
     # log
