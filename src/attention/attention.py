@@ -101,8 +101,8 @@ class AttentionAnalyzer():
         Use CLS token as query for attn
         '''
         attns = self.get_layer_attns(self.model, sent, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
-        entropy = entropy(attns)
-        return entropy
+        ent = entropy(attns)
+        return ent
 
     def _attn_kl_div(self, sent_original, sent_attacked, layer=1, head=0):
         '''
