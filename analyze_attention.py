@@ -26,9 +26,9 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--layer', type=int, default=1, help="layer to analyze")
     commandLineParser.add_argument('--KL_off', action='store_true', help="Specifiy to turn off KL div calculation")
     commandLineParser.add_argument('--entropy_off', action='store_true', help="Specifiy to turn off entropy calculation")
-    
-
+    commandLineParser.add_argument('--align', action='store_true', help="Specifiy to align sequences for entropy calc")
     args = commandLineParser.parse_args()
+    print(args.align)
 
     # Save the command run
     if not os.path.isdir('CMDs'):
@@ -63,16 +63,14 @@ if __name__ == "__main__":
 
     # Entropy calculation
     if not args.entropy_off:
-        success_orig_ents, _ = analyzer.entropy_all(success['o_sens'], layer=args.layer)
-        success_att_ents, _ = analyzer.entropy_all(success['a_sens'], layer=args.layer)
-        unsuccess_orig_ents, _ = analyzer.entropy_all(unsuccess['o_sens'], layer=args.layer)
-        unsuccess_att_ents, _ = analyzer.entropy_all(unsuccess['a_sens'], layer=args.layer)
-
-        out_str += f'\nSuccessful-Original attn entropy\t{mean(success_orig_ents)}+-{stdev(success_orig_ents)}'
-        out_str += f'\nSuccessful-Attack attn entropy\t{mean(success_att_ents)}+-{stdev(success_att_ents)}'
+        suc_ents_o, suc_ents_a, suc_l_os, suc_l_as = analyzer.entropy_all(success['o_sens'], success['a_sens'], layer=args.layer, align=args.align)
+        unsuc_ents_o, unsuc_ents_a, unsuc_l_os, unsuc_l_as = analyzer.entropy_all(unsuccess['o_sens'], unsuccess['a_sens'], layer=args.layer, align=args.align)
+        
+        out_str += f'\nSuccessful-Original attn entropy:\t{mean(suc_ents_o)}+-{stdev(suc_ents_o)}\t\tLength:\t{mean(suc_l_os)}+-{stdev(suc_l_os)}'
+        out_str += f'\nSuccessful-Original attn entropy:\t{mean(suc_ents_a)}+-{stdev(suc_ents_a)}\t\tLength:\t{mean(suc_l_as)}+-{stdev(suc_l_as)}'
         try:
-            out_str += f'\nUnsuccessful-Original attn entropy\t{mean(unsuccess_orig_ents)}+-{stdev(unsuccess_orig_ents)}'
-            out_str += f'\nUnsuccessful-Attack attn entropy\t{mean(unsuccess_att_ents)}+-{stdev(unsuccess_att_ents)}\n\n'
+            out_str += f'\nSuccessful-Original attn entropy:\t{mean(unsuc_ents_o)}+-{stdev(unsuc_ents_o)}\t\tLength:\t{mean(unsuc_l_os)}+-{stdev(unsuc_l_os)}'
+            out_str += f'\nSuccessful-Original attn entropy:\t{mean(unsuc_ents_a)}+-{stdev(unsuc_ents_a)}\t\tLength:\t{mean(unsuc_l_as)}+-{stdev(unsuc_l_as)}'
         except:
             out_str += '\nNo Unsuccessful Attacks\n\n'
 

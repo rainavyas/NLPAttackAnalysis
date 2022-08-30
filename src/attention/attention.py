@@ -59,23 +59,30 @@ class AttentionAnalyzer():
         assert len(tkns_original) == len(attns_original), "Mismatch in num tokens and attn weights"
         self.plot_attn_histogram(tkns_original, tkns_attacked, attns_original, attns_attacked, out_path_root)
     
-    def entropy_all(self, sens, layer=1, num_heads=12):
+    def entropy_all(self, o_sens, a_sens, layer=1, num_heads=12, align=False):
         '''
         Entropy of attn sequence at layer, averaged over heads
         Uses CLS token as query for each attn
+
+        If you want entropies for just o_sens, don't pass a_sens to function
         '''
-        ents = []
-        lengths = []
-        for i, sen in enumerate(sens):
-            print(f'{i}/{len(sens)}')
-            ent = 0
+        ents_o = []
+        ents_a = []
+        l_os = []
+        l_as = []
+        for i, (o, a) in enumerate(zip(o_sens, a_sens)):
+            print(f'{i}/{len(o_sens)}')
+            ent_o = 0
+            ent_a = 0
             for h in range(num_heads):
-                enth, l = self._attn_entropy(sen, layer=layer, head=h)
-                ent += enth
-            ent = ent/num_heads
-            ents.append(ent)
-            lengths.append(l)
-        return ents, lengths
+                enth_o, enth_a, lo, la = self._attn_entropy(o, a, layer=layer, head=h, align=align)
+                ent_o += enth_o
+                ent_a += enth_a
+            ents_o.append(ent_o/num_heads)
+            ents_a.append(ent_a/num_heads)
+            l_os.append(lo)
+            l_as.append(la)
+        return ents_o, ents_a, l_os, l_as
     
     def attn_kl_div_all(self, o_sens, a_sens, layer=1, num_heads=12):
         '''
@@ -95,37 +102,46 @@ class AttentionAnalyzer():
             lengths.append(l)
         return kls, lengths
     
-    def _attn_entropy(self, sent, layer=1, head=0):
+    def _attn_entropy(self, sent_original, sent_attacked, layer=1, head=0, align=False):
         '''
         Calculate entropy of attn distribution at specified layer and head
         Use CLS token as query for attn
         '''
-        attns = self.get_layer_attns(self.model, sent, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
-        ent = entropy(attns)
-        return ent, len(attns)
+        if align:
+            attns_original, attns_attacked, _ = self._align(sent_original, sent_attacked, layer=layer, head=head)
+        else:
+            attns_original = self.get_layer_attns(self.model, sent_original, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
+            attns_attacked = self.get_layer_attns(self.model, sent_original, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
+        return entropy(attns_original), entropy(attns_attacked), len(attns_original), len(attns_attacked)
 
     def _attn_kl_div(self, sent_original, sent_attacked, layer=1, head=0):
         '''
         Calculate KL divergence between original and attacked attention distribution
         Use CLS token as query for attn
         '''
+        attns_original, attns_attacked, _ = self._align(sent_original, sent_attacked, layer=layer, head=head)
+
+        # Calculate KL div
+        kl_div = sum(rel_entr(attns_original, attns_attacked))
+
+        # return KL div and length
+        return kl_div, len(attns_original)
+    
+    def _align(self, sent_original, sent_attacked, layer=1, head=0):
+        '''
+        Sentences to aligned attn sequences
+        Use CLS Token for attn query
+        '''
         # get tokens
         tkns_original = self.model.tokenizer.encode(sent_original, add_special_tokens=True)
         tkns_attacked = self.model.tokenizer.encode(sent_attacked, add_special_tokens=True)
-        seq_length = len(tkns_original)
 
         # Extract attention weights
         attns_original = self.get_layer_attns(self.model, sent_original, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
         attns_attacked = self.get_layer_attns(self.model, sent_attacked, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
 
         # match length of attn distributions
-        attns_original, attns_attacked, _ = self._match_length(attns_original, attns_attacked, tkns_original, tkns_attacked)
-
-        # Calculate KL div
-        kl_div = sum(rel_entr(attns_original, attns_attacked))
-
-        # return KL div and length
-        return kl_div, seq_length
+        return self._match_length(attns_original, attns_attacked, tkns_original, tkns_attacked)
     
     
     @staticmethod
