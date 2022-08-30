@@ -28,7 +28,6 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--entropy_off', action='store_true', help="Specifiy to turn off entropy calculation")
     commandLineParser.add_argument('--align', action='store_true', help="Specifiy to align sequences for entropy calc")
     args = commandLineParser.parse_args()
-    print(args.align)
 
     # Save the command run
     if not os.path.isdir('CMDs'):
@@ -67,10 +66,10 @@ if __name__ == "__main__":
         unsuc_ents_o, unsuc_ents_a, unsuc_l_os, unsuc_l_as = analyzer.entropy_all(unsuccess['o_sens'], unsuccess['a_sens'], layer=args.layer, align=args.align)
         
         out_str += f'\nSuccessful-Original attn entropy:\t{mean(suc_ents_o)}+-{stdev(suc_ents_o)}\t\tLength:\t{mean(suc_l_os)}+-{stdev(suc_l_os)}'
-        out_str += f'\nSuccessful-Original attn entropy:\t{mean(suc_ents_a)}+-{stdev(suc_ents_a)}\t\tLength:\t{mean(suc_l_as)}+-{stdev(suc_l_as)}'
+        out_str += f'\nSuccessful-Attacked attn entropy:\t{mean(suc_ents_a)}+-{stdev(suc_ents_a)}\t\tLength:\t{mean(suc_l_as)}+-{stdev(suc_l_as)}'
         try:
             out_str += f'\nSuccessful-Original attn entropy:\t{mean(unsuc_ents_o)}+-{stdev(unsuc_ents_o)}\t\tLength:\t{mean(unsuc_l_os)}+-{stdev(unsuc_l_os)}'
-            out_str += f'\nSuccessful-Original attn entropy:\t{mean(unsuc_ents_a)}+-{stdev(unsuc_ents_a)}\t\tLength:\t{mean(unsuc_l_as)}+-{stdev(unsuc_l_as)}'
+            out_str += f'\nSuccessful-Attacked attn entropy:\t{mean(unsuc_ents_a)}+-{stdev(unsuc_ents_a)}\t\tLength:\t{mean(unsuc_l_as)}+-{stdev(unsuc_l_as)}'
         except:
             out_str += '\nNo Unsuccessful Attacks\n\n'
 

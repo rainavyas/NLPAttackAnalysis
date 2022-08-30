@@ -111,7 +111,7 @@ class AttentionAnalyzer():
             attns_original, attns_attacked, _ = self._align(sent_original, sent_attacked, layer=layer, head=head)
         else:
             attns_original = self.get_layer_attns(self.model, sent_original, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
-            attns_attacked = self.get_layer_attns(self.model, sent_original, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
+            attns_attacked = self.get_layer_attns(self.model, sent_attacked, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
         return entropy(attns_original), entropy(attns_attacked), len(attns_original), len(attns_attacked)
 
     def _attn_kl_div(self, sent_original, sent_attacked, layer=1, head=0):
