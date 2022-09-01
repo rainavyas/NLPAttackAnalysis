@@ -26,6 +26,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--layer', type=int, default=1, help="layer to analyze")
     commandLineParser.add_argument('--KL_off', action='store_true', help="Specifiy to turn off KL div calculation")
     commandLineParser.add_argument('--entropy_off', action='store_true', help="Specifiy to turn off entropy calculation")
+    commandLineParser.add_argument('--emb_dist_off', action='store_true', help="Specifiy to turn off emb dist calculation")
     commandLineParser.add_argument('--align', action='store_true', help="Specifiy to align sequences for entropy calc")
     args = commandLineParser.parse_args()
 
@@ -41,6 +42,11 @@ if __name__ == "__main__":
     device = torch.device('cpu')
     model.to(device)
     model.eval()
+
+    # temp
+    sent = 'my name is you know what.'
+    AttentionAnalyzer.get_layer_embs(model, sent, layer=args.layer)
+
 
     # Load and filter data
     o_sen, a_sen, o_pred, a_pred, labels = select_attacked_data(args.attack_dir_path, args.part)

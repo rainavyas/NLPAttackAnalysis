@@ -22,6 +22,19 @@ class AttentionAnalyzer():
             att = torch.mean(att, dim=1, keepdim=True)
         return att.squeeze()
 
+    @staticmethod
+    def get_layer_embs(model, sentence, layer=1):
+        '''
+        Returns embeddings input to specified layer (i.e. what attention acts over)
+        '''
+        if layer == 1:
+            input_ids = model.tokenizer.encode(sentence, add_special_tokens=True)
+            hidden_embs = model.model.embeddings(input_ids=input_ids)
+            print(hidden_embs.size())
+        else:
+            outputs = model.predict([sentence], output_hidden_states=True)
+            print(outputs.keys())
+
     
     @staticmethod
     def plot_attn_histogram(tkns_original, tkns_attacked, attns_original, attns_attacked, out_path_root, highlight_pos=None):
