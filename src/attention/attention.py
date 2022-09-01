@@ -30,7 +30,7 @@ class AttentionAnalyzer():
         Returns embeddings input to specified layer (i.e. what attention acts over)
         '''
         outputs = model.predict([sentence], output_hidden_states=True, return_dict=True)
-        hidden_embs = outputs['hidden_states'][layer].squeeze()
+        hidden_embs = outputs['hidden_states'][layer-1].squeeze()
         return hidden_embs
         
     
