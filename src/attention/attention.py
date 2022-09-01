@@ -134,7 +134,7 @@ class AttentionAnalyzer():
 
         # get embeddings
         embs_original = self.get_layer_embs(self.model, sent_original, layer=layer)
-        embs_attacked = self.get_layer_embs(self.model, sent_original, layer=layer)
+        embs_attacked = self.get_layer_embs(self.model, sent_attacked, layer=layer)
 
         # token alignment
         orig_seq, att_seq = nw([str(t) for t in tkns_original], [str(t) for t in tkns_attacked])
