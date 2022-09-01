@@ -32,7 +32,9 @@ class AttentionAnalyzer():
             hidden_embs = model.model.bert.embeddings(input_ids=input_ids).squeeze()
         else:
             outputs = model.predict([sentence], output_hidden_states=True, return_dict=True)
-            print(outputs.keys())
+            hidden_embs = outputs['hidden_states']
+            print(len(hidden_embs))
+            print(hidden_embs.size())
 
     
     @staticmethod
