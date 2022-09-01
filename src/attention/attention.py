@@ -149,7 +149,7 @@ class AttentionAnalyzer():
                 count_a += 1
             else:
                 if o != '-' and a != '-':
-                    diffs.append(distance(embs_original[count_o], embs_attacked[count_a], typ=dist))
+                    diffs.append(distance(embs_original[count_o].squeeze(), embs_attacked[count_a].squeeze(), typ=dist).item())
                     count_o += 1
                     count_a += 1
                 elif o == '-':
