@@ -46,4 +46,4 @@ def distance(x, y, typ='l2'):
     if typ == 'l2':
         return torch.linalg.norm(x-y)
     elif typ == 'cos':
-        return torch.nn.functional.cosine_similarity(x,y)
+        return torch.nn.functional.cosine_similarity(x,y, dim=0)
