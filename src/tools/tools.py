@@ -42,7 +42,7 @@ class AverageMeter(object):
         self.count += n
         self.avg = self.sum / self.count
 
-def dist(x, y, typ='l2'):
+def distance(x, y, typ='l2'):
     if typ == 'l2':
         return torch.linalg.norm(x-y)
     elif typ == 'cos':

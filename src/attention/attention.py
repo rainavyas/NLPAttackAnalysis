@@ -4,7 +4,7 @@ from scipy.special import rel_entr
 from scipy.stats import entropy
 
 from ..tools.nw import nw
-from ..tools.tools import dist
+from ..tools.tools import distance
 
 class AttentionAnalyzer():
     def __init__(self, model=None):
@@ -148,7 +148,7 @@ class AttentionAnalyzer():
                 count_a += 1
             else:
                 if o != '-' and a != '-':
-                    diffs.append(dist(embs_original[count_o], embs_attacked[count_a], typ=dist))
+                    diffs.append(distance(embs_original[count_o], embs_attacked[count_a], typ=dist))
                     count_o += 1
                     count_a += 1
                 elif o == '-':
