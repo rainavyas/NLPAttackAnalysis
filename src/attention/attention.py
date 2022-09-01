@@ -29,8 +29,10 @@ class AttentionAnalyzer():
         '''
         if layer == 1:
             input_ids = model.tokenizer.encode(sentence, add_special_tokens=True)
+            print(input_ids.size())
             hidden_embs = model.model.bert.embeddings(input_ids=input_ids)
-            print(hidden_embs.size())
+            print(len(hidden_embs))
+            print(hidden_embs[0].size())
         else:
             outputs = model.predict([sentence], output_hidden_states=True)
             print(outputs.keys())
