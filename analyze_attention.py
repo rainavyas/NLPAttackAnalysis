@@ -45,7 +45,7 @@ if __name__ == "__main__":
     model.eval()
 
     # Load and filter data
-    o_sen, a_sen, o_pred, a_pred, labels = select_attacked_data(args.attack_dir_path, args.part, num_items=5)
+    o_sen, a_sen, o_pred, a_pred, labels = select_attacked_data(args.attack_dir_path, args.part)
     success, unsuccess = Attacker.get_success_and_unsuccess_attacks(o_sen, a_sen, o_pred, a_pred, labels)
 
     analyzer = AttentionAnalyzer(model=model)
