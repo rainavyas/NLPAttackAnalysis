@@ -28,6 +28,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--entropy_off', action='store_true', help="Specifiy to turn off entropy calculation")
     commandLineParser.add_argument('--emb_dist_off', action='store_true', help="Specifiy to turn off emb dist calculation")
     commandLineParser.add_argument('--align', action='store_true', help="Specifiy to align sequences for entropy calc")
+    commandLineParser.add_argument('--dist', type=str, default='l2', choices=['l2', 'cos'], help="Distance type for emb distance")
     args = commandLineParser.parse_args()
 
     # Save the command run
@@ -42,11 +43,6 @@ if __name__ == "__main__":
     device = torch.device('cpu')
     model.to(device)
     model.eval()
-
-    # temp
-    sent = 'my name is you know what.'
-    AttentionAnalyzer.get_layer_embs(model, sent, layer=args.layer)
-
 
     # Load and filter data
     o_sen, a_sen, o_pred, a_pred, labels = select_attacked_data(args.attack_dir_path, args.part)
@@ -76,6 +72,17 @@ if __name__ == "__main__":
         try:
             out_str += f'\nUnsuccessful-Original attn entropy:\t{mean(unsuc_ents_o)}+-{stdev(unsuc_ents_o)}\t\tLength:\t{mean(unsuc_l_os)}+-{stdev(unsuc_l_os)}'
             out_str += f'\nUnsuccessful-Attacked attn entropy:\t{mean(unsuc_ents_a)}+-{stdev(unsuc_ents_a)}\t\tLength:\t{mean(unsuc_l_as)}+-{stdev(unsuc_l_as)}'
+        except:
+            out_str += '\nNo Unsuccessful Attacks\n\n'
+    
+    # Embeddig Change
+    if not args.emb_dist_off:
+        suc_diffs = analyzer.emb_change_all(success['o_sens'], success['a_sens'], layer=args.layer, dist=args.dist)
+        unsuc_diffs = analyzer.emb_change_all(unsuccess['o_sens'], unsuccess['a_sens'], layer=args.layer, dist=args.dist)
+
+        out_str += f'\nSuccessful attacks embedding change ({args.dist})\t{mean(suc_diffs)}+-{stdev(suc_diffs)}'
+        try:
+            out_str += f'\nUnsuccessful attacks embedding change ({args.dist})\t{mean(suc_diffs)}+-{stdev(suc_diffs)}'
         except:
             out_str += '\nNo Unsuccessful Attacks\n\n'
 

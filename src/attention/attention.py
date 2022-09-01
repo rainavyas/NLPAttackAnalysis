@@ -4,6 +4,7 @@ from scipy.special import rel_entr
 from scipy.stats import entropy
 
 from ..tools.nw import nw
+from ..tools.tools import dist
 
 class AttentionAnalyzer():
     def __init__(self, model=None):
@@ -27,12 +28,10 @@ class AttentionAnalyzer():
         '''
         Returns embeddings input to specified layer (i.e. what attention acts over)
         '''
-
         outputs = model.predict([sentence], output_hidden_states=True, return_dict=True)
         hidden_embs = outputs['hidden_states'][layer].squeeze()
-        print(hidden_embs.size())
+        return hidden_embs
         
-
     
     @staticmethod
     def plot_attn_histogram(tkns_original, tkns_attacked, attns_original, attns_attacked, out_path_root, highlight_pos=None):
@@ -69,6 +68,17 @@ class AttentionAnalyzer():
         # Generate plot
         assert len(tkns_original) == len(attns_original), "Mismatch in num tokens and attn weights"
         self.plot_attn_histogram(tkns_original, tkns_attacked, attns_original, attns_attacked, out_path_root)
+    
+    def emb_change_all(self, o_sens, a_sens, layer=1, dist='l2'):
+        '''
+        Average change in embedding vector (for substituted positions)
+        '''
+        diffs = []
+        for i, (o, a) in enumerate(zip(o_sens, a_sens)):
+            print(f'{i}/{len(o_sens)}')
+            diff = self._emb_change(o, a, layer=layer, dist=dist)
+            diffs.append(diff)
+        return diffs
     
     def entropy_all(self, o_sens, a_sens, layer=1, num_heads=12, align=False):
         '''
@@ -112,6 +122,44 @@ class AttentionAnalyzer():
             kls.append(kl)
             lengths.append(l)
         return kls, lengths
+    
+    def _emb_change(self, sent_original, sent_attacked, layer=1, dist='l2'):
+        '''
+        Calculate average (over substitutions) change in embedding values
+        '''
+        # get tokens
+        tkns_original = self.model.tokenizer.encode(sent_original, add_special_tokens=True)
+        tkns_attacked = self.model.tokenizer.encode(sent_attacked, add_special_tokens=True)
+
+        # get embeddings
+        embs_original = self.get_layer_embs(self.model, sent_original, layer=layer)
+        embs_attacked = self.get_layer_embs(self.model, sent_original, layer=layer)
+
+        # token alignment
+        orig_seq, att_seq = nw([str(t) for t in tkns_original], [str(t) for t in tkns_attacked])
+
+        # Calculate average embedding change
+        diffs = []
+        count_o = 0
+        count_a = 0
+        for o, a in zip(orig_seq, att_seq):
+            if o == a:
+                count_o += 1
+                count_a += 1
+            else:
+                if o != '-' and a != '-':
+                    diffs.append(dist(embs_original[count_o], embs_attacked[count_a], typ=dist))
+                    count_o += 1
+                    count_a += 1
+                elif o == '-':
+                    count_a += 1
+                elif a == '-':
+                    count_o += 1
+                else:
+                    print("Alignment went wrong")
+        return torch.mean(diffs).item()
+
+
     
     def _attn_entropy(self, sent_original, sent_attacked, layer=1, head=0, align=False):
         '''

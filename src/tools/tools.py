@@ -41,3 +41,9 @@ class AverageMeter(object):
         self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
+
+def dist(x, y, typ='l2'):
+    if typ == 'l2':
+        return torch.linalg.norm(x-y)
+    elif typ == 'cos':
+        return torch.nn.functional.cosine_similarity(x,y)
