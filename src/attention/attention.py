@@ -2,6 +2,7 @@ import torch
 import matplotlib.pyplot as plt
 from scipy.special import rel_entr
 from scipy.stats import entropy
+from statistics import mean
 
 from ..tools.nw import nw
 from ..tools.tools import distance
@@ -157,7 +158,7 @@ class AttentionAnalyzer():
                     count_o += 1
                 else:
                     print("Alignment went wrong")
-        return torch.mean(diffs).item()
+        return mean(diffs)
 
 
     
