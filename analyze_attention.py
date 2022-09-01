@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
         out_str += f'\nSuccessful attacks embedding change ({args.dist})\t{mean(suc_diffs)}+-{stdev(suc_diffs)}'
         try:
-            out_str += f'\nUnsuccessful attacks embedding change ({args.dist})\t{mean(suc_diffs)}+-{stdev(suc_diffs)}'
+            out_str += f'\nUnsuccessful attacks embedding change ({args.dist})\t{mean(unsuc_diffs)}+-{stdev(unsuc_diffs)}'
         except:
             out_str += '\nNo Unsuccessful Attacks\n\n'
 
