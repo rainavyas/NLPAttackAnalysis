@@ -27,14 +27,11 @@ class AttentionAnalyzer():
         '''
         Returns embeddings input to specified layer (i.e. what attention acts over)
         '''
-        if layer == 1:
-            input_ids = model.tokenizer([sentence], add_special_tokens=True, return_tensors='pt')['input_ids']
-            hidden_embs = model.model.bert.embeddings(input_ids=input_ids).squeeze()
-        else:
-            outputs = model.predict([sentence], output_hidden_states=True, return_dict=True)
-            hidden_embs = outputs['hidden_states']
-            print(len(hidden_embs))
-            print(hidden_embs.size())
+
+        outputs = model.predict([sentence], output_hidden_states=True, return_dict=True)
+        hidden_embs = outputs['hidden_states'][layer].squeeze()
+        print(hidden_embs.size())
+        
 
     
     @staticmethod
