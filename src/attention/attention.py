@@ -158,6 +158,8 @@ class AttentionAnalyzer():
                     count_o += 1
                 else:
                     print("Alignment went wrong")
+        if len(diffs) == 0:
+            return 0
         return mean(diffs)
 
 
