@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 import matplotlib.pyplot as plt
 from scipy.special import rel_entr
 from scipy.stats import entropy
@@ -10,6 +11,7 @@ from ..tools.tools import distance
 class AttentionAnalyzer():
     def __init__(self, model=None):
         self.model = model
+        self.s = nn.Softmax(dim=0)
     
     @staticmethod
     def get_layer_attns(model, sentence, layer=1, avg_heads=True, avg_queries=True, only_CLS=False):
@@ -70,6 +72,17 @@ class AttentionAnalyzer():
         assert len(tkns_original) == len(attns_original), "Mismatch in num tokens and attn weights"
         self.plot_attn_histogram(tkns_original, tkns_attacked, attns_original, attns_attacked, out_path_root)
     
+    def out_entropy_all(self, sens):
+        '''
+        Entropy of output distribution over classes
+        '''
+        ents = []
+        for i, s in enumerate(sens):
+            print(f'{i}/{len(sens)}')
+            ent = self._out_entropy(s)
+            ents.append(ent)
+        return ents
+    
     def emb_change_all(self, o_sens, a_sens, layer=1, dist='l2'):
         '''
         Average change in embedding vector (for substituted positions)
@@ -123,6 +136,15 @@ class AttentionAnalyzer():
             kls.append(kl)
             lengths.append(l)
         return kls, lengths
+    
+    def _out_entropy(self, sen):
+        '''
+        Entrpy of output class distribution
+        '''
+        logits = self.model.predict(sen).squeeze()
+        probs = self.s(logits)
+        entropy = entropy(probs.tolist())
+        return entropy
     
     def _emb_change(self, sent_original, sent_attacked, layer=1, dist='l2'):
         '''

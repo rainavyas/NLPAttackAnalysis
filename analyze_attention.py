@@ -7,12 +7,15 @@ Usage:
 import sys
 import os
 import argparse
+import torch
+from statistics import mean, stdev
+
 from src.attention.attention import AttentionAnalyzer
 from src.models.model_selector import select_model
 from src.data.select_attacked_data import select_attacked_data
 from src.attack.generate_attack import Attacker
-import torch
-from statistics import mean, stdev
+from src.tools.retention import Retention
+
 
 if __name__ == "__main__":
 
@@ -25,10 +28,12 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--part', type=str, default='test', help="part of data")
     commandLineParser.add_argument('--layer', type=int, default=1, help="layer to analyze")
     commandLineParser.add_argument('--KL_off', action='store_true', help="Specifiy to turn off KL div calculation")
-    commandLineParser.add_argument('--entropy_off', action='store_true', help="Specifiy to turn off entropy calculation")
+    commandLineParser.add_argument('--entropy_off', action='store_true', help="Specifiy to turn off entropy calculation of attention distribution")
     commandLineParser.add_argument('--emb_dist_off', action='store_true', help="Specifiy to turn off emb dist calculation")
+    commandLineParser.add_argument('--out_entropy_off', action='store_true', help="Specifiy to turn off entropy of output")
     commandLineParser.add_argument('--align', action='store_true', help="Specifiy to align sequences for entropy calc")
     commandLineParser.add_argument('--dist', type=str, default='l2', choices=['l2', 'cos'], help="Distance type for emb distance")
+    commandLineParser.add_argument('--out_path_plot', type=str, default='none', help="Path to save any generated plot")
     args = commandLineParser.parse_args()
 
     # Save the command run
@@ -85,6 +90,24 @@ if __name__ == "__main__":
             out_str += f'\nUnsuccessful attacks embedding change ({args.dist})\t{mean(unsuc_diffs)}+-{stdev(unsuc_diffs)}'
         except:
             out_str += '\nNo Unsuccessful Attacks\n\n'
+
+    # Entropy of output
+    if not args.out_entropy_off:
+        suc_ent = analyzer.out_entropy_all(success['o_sens'])
+        unsuc_ent = analyzer.out_entropy_all(unsuccess['o_sens'])
+        labels = [1]*len(suc_ent) + [0]*len(unsuc_ent)
+        attack_recalls, rets = Retention.retention_curve_frac_positive(suc_ent+unsuc_ent, labels)
+        # generate plot: Total frac of unattackable samples found VS lowest entropy % of all original samples
+
+        # use args.out_path_plot to save plot
+        print(attack_recalls)
+
+        out_str += f'\nSuccessful Original attacks output entropy ({args.dist})\t{mean(suc_ent)}+-{stdev(suc_ent)}'
+        try:
+            out_str += f'\nUnsuccessful Original attacks output entropy  ({args.dist})\t{mean(unsuc_ent)}+-{stdev(unsuc_ent)}'
+        except:
+            out_str += '\nNo Unsuccessful Attacks\n\n'
+    
 
     print(out_str)
 
