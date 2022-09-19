@@ -34,7 +34,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--out_entropy_off', action='store_true', help="Specifiy to turn off entropy of output")
     commandLineParser.add_argument('--align', action='store_true', help="Specifiy to align sequences for entropy calc")
     commandLineParser.add_argument('--dist', type=str, default='l2', choices=['l2', 'cos'], help="Distance type for emb distance")
-    commandLineParser.add_argument('--out_path_plot', type=str, default='none', help="Path to save any generated plot")
+    commandLineParser.add_argument('--out_path_plot', type=str, default='none', help="Path to dir to save any generated plot")
     args = commandLineParser.parse_args()
 
     # Save the command run
@@ -102,12 +102,15 @@ if __name__ == "__main__":
         attack_recalls, rets = Retention.retention_curve_frac_positive(suc_ent+unsuc_ent, labels)
 
         # Create retention plot
-        plt.plot(rets, attack_recalls, label=args.attack_items[-1])
+        out_path_part = '_'.join(attack_items[-4:])
+        out_path = f'{args.out_path_plot}/{out_path_part}.png'
+
+        plt.plot(rets, attack_recalls, label=attack_items[-1])
         plt.plot(rets, rets, label='No correlation', linestyle='dashed')
         plt.ylabel('Attackable Samples Recall Rate')
         plt.xlabel('Retention Fraction by lowest output entropy')
         plt.legend()
-        plt.savefig(args.out_path_plot, bbox_inches='tight')
+        plt.savefig(args.out_path, bbox_inches='tight')
         plt.clf()
 
         out_str += f'\nSuccessful Original attacks output entropy \t{mean(suc_ent)}+-{stdev(suc_ent)}'
