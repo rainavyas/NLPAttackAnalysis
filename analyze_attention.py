@@ -111,7 +111,7 @@ if __name__ == "__main__":
         out_path = f'{args.out_path_plot}/out_entropy_{out_path_part}.png'
 
         plt.plot(rets, attack_recalls, label=f'{attack_items[-1]} output entropy')
-        plt.plot(rets, rets, label='No correlation', linestyle='dashed')
+        plt.plot(rets, rets, label='No correlation', linestyle='dashed', color='red', linewidth=0.5)
         plt.plot(rets, opt1_rec, label='Limit 1', linestyle='dashed', color='purple', linewidth=0.5)
         plt.plot(rets, opt2_rec, label='Limit 2', linestyle='dashed', color='purple', linewidth=0.5)
         plt.ylabel('Attackable Samples Recall Rate')
@@ -149,7 +149,7 @@ if __name__ == "__main__":
         out_path = f'{args.out_path_plot}/attn_entropy_{out_path_part}.png'
         if args.norm_ent:
             out_path = f'{args.out_path_plot}/attn_entropy_norm_{out_path_part}.png'
-        plt.plot(rets, rets, label='No correlation', linestyle='dashed')
+        plt.plot(rets, rets, label='No correlation', linestyle='dashed', color='red', linewidth=0.5)
         plt.plot(rets, opt1_rec, label='Limit 1', linestyle='dashed', color='purple', linewidth=0.5)
         plt.plot(rets, opt2_rec, label='Limit 2', linestyle='dashed', color='purple', linewidth=0.5)
         plt.ylabel('Attackable Samples Recall Rate')
