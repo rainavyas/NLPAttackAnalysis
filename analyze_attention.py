@@ -10,6 +10,7 @@ import argparse
 import torch
 from statistics import mean, stdev
 import matplotlib.pyplot as plt
+import math
 
 from src.attention.attention import AttentionAnalyzer
 from src.models.model_selector import select_model
@@ -36,6 +37,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--align', action='store_true', help="Specifiy to align sequences for entropy calc")
     commandLineParser.add_argument('--dist', type=str, default='l2', choices=['l2', 'cos'], help="Distance type for emb distance")
     commandLineParser.add_argument('--out_path_plot', type=str, default='none', help="Path to dir to save any generated plot")
+    commandLineParser.add_argument('--norm_ent', action='store_true', help="Specifiy to normalize entropy by sequence length")
     args = commandLineParser.parse_args()
 
     # Save the command run
@@ -124,16 +126,23 @@ if __name__ == "__main__":
     if not args.attn_entropy_off:
         layers = [1,6,12]
         for l in layers:
-            suc_ent, _ = analyzer.entropy_all(success['o_sens'], num_heads=1, layer=l)
-            unsuc_ent, _ = analyzer.entropy_all(unsuccess['o_sens'], num_heads=1, layer=l)
+            suc_ent, suc_lens = analyzer.entropy_all(success['o_sens'], num_heads=1, layer=l)
+            unsuc_ent, unsuc_lens = analyzer.entropy_all(unsuccess['o_sens'], num_heads=1, layer=l)
             labels = [1]*len(suc_ent) + [0]*len(unsuc_ent)
-            attack_recalls, rets = Retention.retention_curve_frac_positive(suc_ent+unsuc_ent, labels)
+            ents = suc_ent+unsuc_ent
+            if args.norm_ent:
+                # normalize entropy by sequence length
+                lens = suc_lens + unsuc_lens
+                ents = [e/math.log(l) for e,l in zip(ents, lens)]
+            attack_recalls, rets = Retention.retention_curve_frac_positive(ents, labels)
 
             # Create retention plot
             plt.plot(rets, attack_recalls, label=f'layer {l} attn entropy')
 
         out_path_part = '_'.join(attack_items[-4:])
         out_path = f'{args.out_path_plot}/attn_entropy_{out_path_part}.png'
+        if args.norm_ent:
+            out_path = f'{args.out_path_plot}/attn_entropy_norm_{out_path_part}.png'
         plt.plot(rets, rets, label='No correlation', linestyle='dashed')
         plt.ylabel('Attackable Samples Recall Rate')
         plt.xlabel('Retention Fraction by lowest attn entropy')
