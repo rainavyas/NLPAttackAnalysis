@@ -103,6 +103,7 @@ if __name__ == "__main__":
         unsuc_ent = analyzer.out_entropy_all(unsuccess['o_sens'])
         labels = [1]*len(suc_ent) + [0]*len(unsuc_ent)
         attack_recalls, rets = Retention.retention_curve_frac_positive(suc_ent+unsuc_ent, labels)
+        opt_rec, _ = Retention.retention_curve_frac_positive(labels, labels)
 
         # Create retention plot
         out_path_part = '_'.join(attack_items[-4:])
@@ -110,6 +111,7 @@ if __name__ == "__main__":
 
         plt.plot(rets, attack_recalls, label=f'{attack_items[-1]} output entropy')
         plt.plot(rets, rets, label='No correlation', linestyle='dashed')
+        plt.plot(rets, opt_rec, label='Optimal', linestyle='dashed')
         plt.ylabel('Attackable Samples Recall Rate')
         plt.xlabel('Retention Fraction by lowest output entropy')
         plt.legend()
@@ -139,11 +141,13 @@ if __name__ == "__main__":
             # Create retention plot
             plt.plot(rets, attack_recalls, label=f'layer {l} attn entropy')
 
+        opt_rec, _ = Retention.retention_curve_frac_positive(labels, labels)
         out_path_part = '_'.join(attack_items[-4:])
         out_path = f'{args.out_path_plot}/attn_entropy_{out_path_part}.png'
         if args.norm_ent:
             out_path = f'{args.out_path_plot}/attn_entropy_norm_{out_path_part}.png'
         plt.plot(rets, rets, label='No correlation', linestyle='dashed')
+        plt.plot(rets, opt_rec, label='Optimal', linestyle='dashed')
         plt.ylabel('Attackable Samples Recall Rate')
         plt.xlabel('Retention Fraction by lowest attn entropy')
         plt.legend()
