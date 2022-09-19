@@ -15,7 +15,7 @@ class Retention():
             - Repeat for r from 0 to 1, and return f(r)
         '''
         rets = [(i+1)/len(vals) for i,_ in enumerate(vals)]
-        ordering = np.argsort(np.asarray(vals), ascending=ascending)
+        ordering = np.argsort(np.asarray(vals))
         ordered_labels = np.asarray(labels)[ordering]
 
         counts = []
@@ -25,7 +25,7 @@ class Retention():
                 curr+=1
             counts.append(curr)
         recalls = [c/counts[-1] for c in counts]
-        
+
         return recalls, rets
         
 

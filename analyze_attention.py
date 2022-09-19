@@ -9,6 +9,7 @@ import os
 import argparse
 import torch
 from statistics import mean, stdev
+import matplotlib.pyplot as plt
 
 from src.attention.attention import AttentionAnalyzer
 from src.models.model_selector import select_model
@@ -97,10 +98,12 @@ if __name__ == "__main__":
         unsuc_ent = analyzer.out_entropy_all(unsuccess['o_sens'])
         labels = [1]*len(suc_ent) + [0]*len(unsuc_ent)
         attack_recalls, rets = Retention.retention_curve_frac_positive(suc_ent+unsuc_ent, labels)
-        # generate plot: Total frac of unattackable samples found VS lowest entropy % of all original samples
+
+        # Create retention plot
 
         # use args.out_path_plot to save plot
         print(attack_recalls)
+
 
         out_str += f'\nSuccessful Original attacks output entropy ({args.dist})\t{mean(suc_ent)}+-{stdev(suc_ent)}'
         try:

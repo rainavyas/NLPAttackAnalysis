@@ -143,7 +143,6 @@ class AttentionAnalyzer():
         '''
         logits = self.model.predict(sen)[0].squeeze()
         probs = self.s(logits)
-        print(probs)
         ent = entropy(probs.tolist())
         return ent
     
