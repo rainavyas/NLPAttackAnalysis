@@ -141,7 +141,8 @@ class AttentionAnalyzer():
         '''
         Entrpy of output class distribution
         '''
-        logits = self.model.predict(sen).squeeze()
+        logits = self.model.predict(sen)[0].squeeze()
+        print(probs)
         probs = self.s(logits)
         entropy = entropy(probs.tolist())
         return entropy
