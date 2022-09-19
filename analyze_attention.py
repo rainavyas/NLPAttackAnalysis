@@ -43,6 +43,8 @@ if __name__ == "__main__":
     with open('CMDs/analyse_attention.cmd', 'a') as f:
         f.write(' '.join(sys.argv)+'\n')
 
+    attack_items = args.attack_dir_path
+    attack_items = attack_items.split('/')
 
     # Load model
     model = select_model(args.model_name, model_path=args.model_path)
@@ -81,7 +83,7 @@ if __name__ == "__main__":
         except:
             out_str += '\nNo Unsuccessful Attacks\n\n'
     
-    # Embeddig Change
+    # Embedding Change
     if not args.emb_dist_off:
         suc_diffs = analyzer.emb_change_all(success['o_sens'], success['a_sens'], layer=args.layer, dist=args.dist)
         unsuc_diffs = analyzer.emb_change_all(unsuccess['o_sens'], unsuccess['a_sens'], layer=args.layer, dist=args.dist)
@@ -100,14 +102,17 @@ if __name__ == "__main__":
         attack_recalls, rets = Retention.retention_curve_frac_positive(suc_ent+unsuc_ent, labels)
 
         # Create retention plot
+        plt.plot(rets, attack_recalls, label=args.attack_items[-1])
+        plt.plot(rets, rets, label='No correlation', linestyle='dashed')
+        plt.ylabel('Attackable Samples Recall Rate')
+        plt.xlabel('Retention Fraction by lowest output entropy')
+        plt.legend()
+        plt.savefig(args.out_path_plot, bbox_inches='tight')
+        plt.clf()
 
-        # use args.out_path_plot to save plot
-        print(attack_recalls)
-
-
-        out_str += f'\nSuccessful Original attacks output entropy ({args.dist})\t{mean(suc_ent)}+-{stdev(suc_ent)}'
+        out_str += f'\nSuccessful Original attacks output entropy \t{mean(suc_ent)}+-{stdev(suc_ent)}'
         try:
-            out_str += f'\nUnsuccessful Original attacks output entropy  ({args.dist})\t{mean(unsuc_ent)}+-{stdev(unsuc_ent)}'
+            out_str += f'\nUnsuccessful Original attacks output entropy \t{mean(unsuc_ent)}+-{stdev(unsuc_ent)}'
         except:
             out_str += '\nNo Unsuccessful Attacks\n\n'
     
@@ -116,8 +121,7 @@ if __name__ == "__main__":
 
     # log
     if args.log_dir != 'none':
-        attack_items = args.attack_dir_path
-        attack_items = '_'.join(attack_items.split('/')[-4:])
+        attack_items = '_'.join(attack_items[-4:])
         out_path = f'{args.log_dir}/{attack_items}_layer{args.layer}.txt'
         with open(out_path, 'w') as f:
             f.write(out_str)
