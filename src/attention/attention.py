@@ -144,8 +144,8 @@ class AttentionAnalyzer():
         logits = self.model.predict(sen)[0].squeeze()
         probs = self.s(logits)
         print(probs)
-        entropy = entropy(probs.tolist())
-        return entropy
+        ent = entropy(probs.tolist())
+        return ent
     
     def _emb_change(self, sent_original, sent_attacked, layer=1, dist='l2'):
         '''
