@@ -94,7 +94,7 @@ class AttentionAnalyzer():
             diffs.append(diff)
         return diffs
     
-    def entropy_all(self, o_sens, a_sens, layer=1, num_heads=12, align=False):
+    def entropy_all(self, o_sens, a_sens=None, layer=1, num_heads=12, align=False):
         '''
         Entropy of attn sequence at layer, averaged over heads
         Uses CLS token as query for each attn
@@ -102,23 +102,38 @@ class AttentionAnalyzer():
         If you want entropies for just o_sens, don't pass a_sens to function
         '''
         ents_o = []
-        ents_a = []
+        if a_sens is not None:
+            ents_a = []
         l_os = []
         l_as = []
-        for i, (o, a) in enumerate(zip(o_sens, a_sens)):
+        if a_sens is not None:
+            elems = zip(o_sens, a_sens)
+        else:
+            elems = o_sens
+        for i, elem in enumerate(elems):
             print(f'{i}/{len(o_sens)}')
             ent_o = 0
-            ent_a = 0
+            if a_sens is not None:
+                ent_a = 0
             for h in range(num_heads):
-                enth_o, enth_a, lo, la = self._attn_entropy(o, a, layer=layer, head=h, align=align)
+                if a_sens is not None:
+                    enth_o, enth_a, lo, la = self._attn_entropy(elem[0], elem[1], layer=layer, head=h, align=align)
+                    ent_a += enth_a
+                else:
+                    enth_o, lo = self._attn_entropy(elem[0], layer=layer, head=h, align=align)
                 ent_o += enth_o
-                ent_a += enth_a
+                
             ents_o.append(ent_o/num_heads)
-            ents_a.append(ent_a/num_heads)
             l_os.append(lo)
-            l_as.append(la)
-        return ents_o, ents_a, l_os, l_as
-    
+            if a_sens is not None:
+                ents_a.append(ent_a/num_heads)
+                l_as.append(la)
+        
+        if a_sens is not None:
+            return ents_o, ents_a, l_os, l_as
+        return ents_o, l_os
+
+
     def attn_kl_div_all(self, o_sens, a_sens, layer=1, num_heads=12):
         '''
         For each orig-attack pair get KL div per layer, where KL avg over heads
@@ -186,17 +201,21 @@ class AttentionAnalyzer():
 
 
     
-    def _attn_entropy(self, sent_original, sent_attacked, layer=1, head=0, align=False):
+    def _attn_entropy(self, sent_original, sent_attacked=None, layer=1, head=0, align=False):
         '''
         Calculate entropy of attn distribution at specified layer and head
         Use CLS token as query for attn
         '''
-        if align:
+        if align and sent_attacked is not None:
             attns_original, attns_attacked, _ = self._align(sent_original, sent_attacked, layer=layer, head=head)
         else:
             attns_original = self.get_layer_attns(self.model, sent_original, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
-            attns_attacked = self.get_layer_attns(self.model, sent_attacked, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
-        return entropy(attns_original), entropy(attns_attacked), len(attns_original), len(attns_attacked)
+            if sent_attacked is not None:
+                attns_attacked = self.get_layer_attns(self.model, sent_attacked, layer=layer, avg_heads=False, avg_queries=False, only_CLS=True).tolist()[head]
+        if sent_attacked is not None:
+            return entropy(attns_original), entropy(attns_attacked), len(attns_original), len(attns_attacked)
+        else:
+            return entropy(attns_original), len(attns_original)
 
     def _attn_kl_div(self, sent_original, sent_attacked, layer=1, head=0):
         '''

@@ -32,6 +32,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--entropy_off', action='store_true', help="Specifiy to turn off entropy calculation of attention distribution")
     commandLineParser.add_argument('--emb_dist_off', action='store_true', help="Specifiy to turn off emb dist calculation")
     commandLineParser.add_argument('--out_entropy_off', action='store_true', help="Specifiy to turn off entropy of output")
+    commandLineParser.add_argument('--attn_entropy_off', action='store_true', help="Specifiy to turn off entropy of output")
     commandLineParser.add_argument('--align', action='store_true', help="Specifiy to align sequences for entropy calc")
     commandLineParser.add_argument('--dist', type=str, default='l2', choices=['l2', 'cos'], help="Distance type for emb distance")
     commandLineParser.add_argument('--out_path_plot', type=str, default='none', help="Path to dir to save any generated plot")
@@ -70,7 +71,7 @@ if __name__ == "__main__":
         except:
             out_str += '\nNo Unsuccessful Attacks\n\n'
 
-    # Entropy calculation
+    # Entropy calculation of attention distribution
     if not args.entropy_off:
         suc_ents_o, suc_ents_a, suc_l_os, suc_l_as = analyzer.entropy_all(success['o_sens'], success['a_sens'], layer=args.layer, align=args.align)
         unsuc_ents_o, unsuc_ents_a, unsuc_l_os, unsuc_l_as = analyzer.entropy_all(unsuccess['o_sens'], unsuccess['a_sens'], layer=args.layer, align=args.align)
@@ -103,9 +104,9 @@ if __name__ == "__main__":
 
         # Create retention plot
         out_path_part = '_'.join(attack_items[-4:])
-        out_path = f'{args.out_path_plot}/{out_path_part}.png'
+        out_path = f'{args.out_path_plot}/out_entropy_{out_path_part}.png'
 
-        plt.plot(rets, attack_recalls, label=attack_items[-1])
+        plt.plot(rets, attack_recalls, label=f'{attack_items[-1]} output entropy')
         plt.plot(rets, rets, label='No correlation', linestyle='dashed')
         plt.ylabel('Attackable Samples Recall Rate')
         plt.xlabel('Retention Fraction by lowest output entropy')
@@ -118,6 +119,29 @@ if __name__ == "__main__":
             out_str += f'\nUnsuccessful Original attacks output entropy \t{mean(unsuc_ent)}+-{stdev(unsuc_ent)}'
         except:
             out_str += '\nNo Unsuccessful Attacks\n\n'
+    
+    # Entropy of attention distribution with retention plots
+    if not args.attn_entropy_off:
+        layers = [1,6,12]
+        for l in layers:
+            suc_ent, _ = analyzer.entropy_all(success['o_sens'], num_heads=1, layer=l)
+            unsuc_ent, _ = analyzer.entropy_all(unsuccess['o_sens'], num_heads=1, layer=l)
+            labels = [1]*len(suc_ent) + [0]*len(unsuc_ent)
+            attack_recalls, rets = Retention.retention_curve_frac_positive(suc_ent+unsuc_ent, labels)
+
+            # Create retention plot
+            plt.plot(rets, attack_recalls, label=f'layer {l} attn entropy')
+
+        out_path_part = '_'.join(attack_items[-4:])
+        out_path = f'{args.out_path_plot}/attn_entropy_{out_path_part}.png'
+        plt.plot(rets, rets, label='No correlation', linestyle='dashed')
+        plt.ylabel('Attackable Samples Recall Rate')
+        plt.xlabel('Retention Fraction by lowest attn entropy')
+        plt.legend()
+        plt.savefig(out_path, bbox_inches='tight')
+        plt.clf()
+
+
     
 
     print(out_str)
