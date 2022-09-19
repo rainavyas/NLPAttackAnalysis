@@ -110,7 +110,7 @@ if __name__ == "__main__":
         plt.ylabel('Attackable Samples Recall Rate')
         plt.xlabel('Retention Fraction by lowest output entropy')
         plt.legend()
-        plt.savefig(args.out_path, bbox_inches='tight')
+        plt.savefig(out_path, bbox_inches='tight')
         plt.clf()
 
         out_str += f'\nSuccessful Original attacks output entropy \t{mean(suc_ent)}+-{stdev(suc_ent)}'
