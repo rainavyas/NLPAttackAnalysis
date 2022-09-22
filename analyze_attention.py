@@ -12,12 +12,27 @@ from statistics import mean, stdev
 import matplotlib.pyplot as plt
 import math
 
-from src.attention.attention import AttentionAnalyzer
+from src.analyze.attention import AttentionAnalyzer
 from src.models.model_selector import select_model
 from src.data.select_attacked_data import select_attacked_data
 from src.attack.generate_attack import Attacker
 from src.tools.retention import Retention
 
+
+def ret_plot(rets, attack_recalls, labels, out_path, name='output entropy'):
+    opt2_rec, _ = Retention.retention_curve_frac_positive(labels, labels)
+    opt1_rec, _ = Retention.retention_curve_frac_positive([1-l for l in labels], labels)
+
+    # Create retention plot
+    plt.plot(rets, attack_recalls, label=name)
+    plt.plot(rets, rets, label='No correlation', linestyle='dashed', color='red', linewidth=0.5)
+    plt.plot(rets, opt1_rec, label='Limit 1', linestyle='dashed', color='purple', linewidth=0.5)
+    plt.plot(rets, opt2_rec, label='Limit 2', linestyle='dashed', color='purple', linewidth=0.5)
+    plt.ylabel('Attackable Samples Recall Rate')
+    plt.xlabel('Retention Fraction by lowest output entropy')
+    plt.legend()
+    plt.savefig(out_path, bbox_inches='tight')
+    plt.clf()
 
 if __name__ == "__main__":
 
@@ -103,22 +118,10 @@ if __name__ == "__main__":
         unsuc_ent = analyzer.out_entropy_all(unsuccess['o_sens'])
         labels = [1]*len(suc_ent) + [0]*len(unsuc_ent)
         attack_recalls, rets = Retention.retention_curve_frac_positive(suc_ent+unsuc_ent, labels)
-        opt2_rec, _ = Retention.retention_curve_frac_positive(labels, labels)
-        opt1_rec, _ = Retention.retention_curve_frac_positive([1-l for l in labels], labels)
 
-        # Create retention plot
         out_path_part = '_'.join(attack_items[-4:])
         out_path = f'{args.out_path_plot}/out_entropy_{out_path_part}.png'
-
-        plt.plot(rets, attack_recalls, label=f'{attack_items[-1]} output entropy')
-        plt.plot(rets, rets, label='No correlation', linestyle='dashed', color='red', linewidth=0.5)
-        plt.plot(rets, opt1_rec, label='Limit 1', linestyle='dashed', color='purple', linewidth=0.5)
-        plt.plot(rets, opt2_rec, label='Limit 2', linestyle='dashed', color='purple', linewidth=0.5)
-        plt.ylabel('Attackable Samples Recall Rate')
-        plt.xlabel('Retention Fraction by lowest output entropy')
-        plt.legend()
-        plt.savefig(out_path, bbox_inches='tight')
-        plt.clf()
+        ret_plot(rets, attack_recalls, labels, out_path, name='output entropy')
 
         out_str += f'\nSuccessful Original attacks output entropy \t{mean(suc_ent)}+-{stdev(suc_ent)}'
         try:

@@ -1,5 +1,6 @@
 import torch
 import random
+import itertools 
 
 def set_seeds(seed):
     torch.manual_seed(seed)
@@ -47,3 +48,14 @@ def distance(x, y, typ='l2'):
         return torch.linalg.norm(x-y)
     elif typ == 'cos':
         return torch.nn.functional.cosine_similarity(x,y, dim=0)
+
+
+def batch_generator(iterable, batch_size=1):
+    iterable = iter(iterable)
+
+    while True:
+        batch = list(itertools.islice(iterable, batch_size))
+        if len(batch) > 0:
+            yield batch
+        else:
+            break
