@@ -81,9 +81,9 @@ if __name__ == "__main__":
     labels = [1]*len(suc_lks) + [0]*len(unsuc_lks)
     attack_recalls, rets = Retention.retention_curve_frac_positive(suc_lks+unsuc_lks, labels)
 
-    out_str += f'\nSuccessful Original attacks output entropy \t{mean(suc_lks)}+-{stdev(suc_lks)}'
+    out_str += f'\nSuccessful Original attacks log likelihood \t{mean(suc_lks)}+-{stdev(suc_lks)}'
     try:
-        out_str += f'\nUnsuccessful Original attacks output entropy \t{mean(unsuc_lks)}+-{stdev(unsuc_lks)}'
+        out_str += f'\nUnsuccessful Original attacks log likelihood \t{mean(unsuc_lks)}+-{stdev(unsuc_lks)}'
     except:
         out_str += '\nNo Unsuccessful Attacks\n\n'
 
