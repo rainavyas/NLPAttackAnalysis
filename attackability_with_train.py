@@ -61,7 +61,7 @@ if __name__ == "__main__":
     model.eval()
 
     # Init 
-    analyzer = Analyzer(model)
+    analyzer = Analyzer(model, device=device)
 
     # Load train data
     sentences, labels = select_data(data_dir_path=args.data_dir_path, part='train')
