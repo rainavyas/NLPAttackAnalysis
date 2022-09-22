@@ -19,7 +19,7 @@ class Analyzer():
         '''
         cls = self._sens_to_clss(sentences, bs=bs)
         self.mean = torch.mean(cls, dim=0)
-        self.cov = torch.cov(torch.transpose(cls, 0, 1))
+        self.cov = torch.cov(torch.transpose(cls, 0, 1)) + (0.0001*torch.eye(cls.size(1)))
     
     def eval_gaussian(self, sentences, bs=8):
         '''
