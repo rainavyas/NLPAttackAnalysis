@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     out_path_part = '_'.join(attack_items[-4:])
     out_path = f'{args.out_path_plot}/gaussian_likelihood_{out_path_part}.png'
-    ret_plot(rets, attack_recalls, labels, out_path, name='Likelihood')
+    ret_plot(rets, attack_recalls, labels, out_path, name='log likelihood')
     plt.clf()
 
     ############################################################################################

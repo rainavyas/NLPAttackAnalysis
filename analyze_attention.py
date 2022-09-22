@@ -29,7 +29,7 @@ def ret_plot(rets, attack_recalls, labels, out_path, name='output entropy'):
     plt.plot(rets, opt1_rec, label='Limit 1', linestyle='dashed', color='purple', linewidth=0.5)
     plt.plot(rets, opt2_rec, label='Limit 2', linestyle='dashed', color='purple', linewidth=0.5)
     plt.ylabel('Attackable Samples Recall Rate')
-    plt.xlabel('Retention Fraction by lowest output entropy')
+    plt.xlabel(f'Retention Fraction by lowest {name}')
     plt.legend()
     plt.savefig(out_path, bbox_inches='tight')
     plt.clf()
