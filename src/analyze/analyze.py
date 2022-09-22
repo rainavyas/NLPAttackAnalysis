@@ -20,6 +20,7 @@ class Analyzer():
         cls = self._sens_to_clss(sentences, bs=bs)
         self.mean = torch.mean(cls, dim=0)
         self.cov = torch.cov(cls)
+        import pdb; pdb.set_trace()
     
     def eval_gaussian(self, sentences, bs=8):
         '''
@@ -40,7 +41,6 @@ class Analyzer():
                 out = self.model.predict(curr_sens, output_hidden_states=True, return_dict=True, device=self.device)
                 embs = out['hidden_states'][-1]
                 all_cls.append(embs[:,0,:].squeeze(dim=1))
-                import pdb; pdb.set_trace()
         cls = torch.cat(all_cls, dim=0).cpu()
         return cls
 
