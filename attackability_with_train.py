@@ -33,6 +33,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--data_dir_path', type=str, required=True, help='path to train data directory')
     commandLineParser.add_argument('--attack_dir_path', type=str, required=True, help='e.g. src/data/data_files/rt/attacks/bert/pwws')
     commandLineParser.add_argument('--out_path_plot', type=str, default='none', help="Path to dir to save any generated plot")
+    commandLineParser.add_argument('--cpu', action='store_true', help="Specifiy to force cpu use")
     args = commandLineParser.parse_args()
 
     # Save the command run
@@ -42,7 +43,7 @@ if __name__ == "__main__":
         f.write(' '.join(sys.argv)+'\n')
 
     # Get the device
-    if args.force_cpu == 'yes':
+    if args.cpu:
         device = torch.device('cpu')
     else:
         device = get_default_device()
