@@ -12,6 +12,7 @@ import os
 import argparse
 import torch
 import matplotlib.pyplot as plt
+from statistics import mean, stdev
 
 from analyze_attention import ret_plot
 from src.models.model_selector import select_model
@@ -31,7 +32,7 @@ if __name__ == "__main__":
     commandLineParser.add_argument('--model_name', type=str, required=True, help='e.g. bert-base-uncased')
     commandLineParser.add_argument('--data_dir_path', type=str, required=True, help='path to train data directory')
     commandLineParser.add_argument('--attack_dir_path', type=str, required=True, help='e.g. src/data/data_files/rt/attacks/bert/pwws')
-    commandLineParser.add_argument('--log_dir', type=str, default='none', help="Directory to log results, e.g. ./experiments/log_results/attackability_with_train")
+    commandLineParser.add_argument('--out_path_plot', type=str, default='none', help="Path to dir to save any generated plot")
     args = commandLineParser.parse_args()
 
     # Save the command run
@@ -49,6 +50,7 @@ if __name__ == "__main__":
     attack_items = args.attack_dir_path
     attack_items = attack_items.split('/')
     
+    out_str = ''
 
     #################################### METHOD 1 ###########################################
 
@@ -67,7 +69,7 @@ if __name__ == "__main__":
     analyzer.train_gaussian(sentences)
 
     # Load test data
-    o_sen, a_sen, o_pred, a_pred, labels = select_attacked_data(args.attack_dir_path, args.part)
+    o_sen, a_sen, o_pred, a_pred, labels = select_attacked_data(args.attack_dir_path, 'test')
     success, unsuccess = Attacker.get_success_and_unsuccess_attacks(o_sen, a_sen, o_pred, a_pred, labels)
 
     # Evaluate Gaussian model
@@ -77,6 +79,12 @@ if __name__ == "__main__":
     # Retention plot
     labels = [1]*len(suc_lks) + [0]*len(unsuc_lks)
     attack_recalls, rets = Retention.retention_curve_frac_positive(suc_lks+unsuc_lks, labels)
+
+    out_str += f'\nSuccessful Original attacks output entropy \t{mean(suc_lks)}+-{stdev(suc_lks)}'
+    try:
+        out_str += f'\nUnsuccessful Original attacks output entropy \t{mean(unsuc_lks)}+-{stdev(unsuc_lks)}'
+    except:
+        out_str += '\nNo Unsuccessful Attacks\n\n'
 
     out_path_part = '_'.join(attack_items[-4:])
     out_path = f'{args.out_path_plot}/gaussian_likelihood_{out_path_part}.png'
